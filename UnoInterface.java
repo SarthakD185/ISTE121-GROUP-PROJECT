@@ -6,7 +6,7 @@ public class UnoInterface implements Serializable{
    int PlayerNumber;
 
    //Constructor
-   public UnoInterface(String N){
+   public UnoInterface(String N, int PN){
 
       Name = N;
       PlayerNumber = PN;
@@ -18,7 +18,7 @@ public class UnoInterface implements Serializable{
       return Name;
    }
    
-   public String getPlayerNumber(){
+   public int getPlayerNumber(){
       return PlayerNumber;
    }
 

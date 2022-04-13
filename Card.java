@@ -31,7 +31,7 @@ public class Card {
    
    public String toString(){
 
-      String output = "Card info: Color: " + Color + "Number: " + Number;
+      String output = "Card info: Color: " + Color + " Number: " + Number;
       return output;
    }
 }

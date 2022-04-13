@@ -11,6 +11,8 @@ import javafx.geometry.*;
 import java.net.*;
 import java.io.*;
 
+import java.util.*;
+
 public class UnoServer extends Application implements EventHandler<ActionEvent>{
 
    private Stage stage;
@@ -27,6 +29,13 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    Socket socket;
    DataInputStream dis = null;
    DataOutputStream dos = null;
+   
+   //card variables
+   String color;
+   int number;
+   
+   //full deck array list
+   ArrayList<Card> fullDeck = new ArrayList<Card>();
    
    public static void main(String[] args) {
       launch(args);
@@ -72,6 +81,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             serverThread = new ServerThread();
             serverThread.start();
             btnStart.setText("Stop");
+            createDeck();
             break;
          case "Stop":
             disconnect();
@@ -159,9 +169,56 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       }
       
       
+   } 
+   
+   public void createDeck(){
+      //create the zero cards
+      Card c1 = new Card("red", 0);
+      Card c2 = new Card("yellow", 0);
+      Card c3 = new Card("blue", 0);
+      Card c4 = new Card("green", 0);
+            
+      //add the zero cards to the full deck
+      fullDeck.add(c1);
+      fullDeck.add(c2);
+      fullDeck.add(c3);
+      fullDeck.add(c4);
+            
+      //colors
+      for (int x = 0; x < 4; x++){
+         //numbers
+         for (int y = 1; y < 10; y++){
+            //2 of each number
+            for(int z = 0; z < 2; z++){
+            
+            if(x == 0){
+               color = "red";
+            }
+            else if(x == 1){
+               color = "yellow";
+            }
+            else if(x == 2){
+               color = "blue";
+            }
+            else if(x == 3){
+               color = "green";
+            }
+            
+            number = y;
+            //create a Card
+            Card c = new Card(color, number);
+            
+            //add the card to the full deck
+            fullDeck.add(c);
+            }
+         }
+      }
       
+      System.out.println("Array Size: " + fullDeck.size());
+      for(int x2 = 0; x2 < fullDeck.size(); x2++){
+         System.out.println(fullDeck.get(x2).toString());
+      }
    }
  
  
 }
-

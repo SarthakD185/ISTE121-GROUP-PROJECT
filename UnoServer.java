@@ -177,17 +177,39 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       Card c2 = new Card("yellow", 0);
       Card c3 = new Card("blue", 0);
       Card c4 = new Card("green", 0);
+      
+      //create the WILD cards
+      Card c5 = new Card("wild", 0);
+      Card c6 = new Card("wild", 0);
+      Card c7 = new Card("wild", 0);
+      Card c8 = new Card("wild", 0);
+      
+      //create the WILD +4 cards
+      Card c9 = new Card("wild+4", 0);
+      Card c10 = new Card("wild+4", 0);
+      Card c11 = new Card("wild+4", 0);
+      Card c12 = new Card("wild+4", 0);
             
       //add the zero cards to the full deck
       fullDeck.add(c1);
       fullDeck.add(c2);
       fullDeck.add(c3);
       fullDeck.add(c4);
+      fullDeck.add(c5);
+      fullDeck.add(c6);
+      fullDeck.add(c7);
+      fullDeck.add(c8);
+      fullDeck.add(c9);
+      fullDeck.add(c10);
+      fullDeck.add(c11);
+      fullDeck.add(c12);
             
       //colors
       for (int x = 0; x < 4; x++){
          //numbers
-         for (int y = 1; y < 10; y++){
+         // regular numbers are 0 to 9
+         // 10 is +2
+         for (int y = 1; y < 11; y++){
             //2 of each number
             for(int z = 0; z < 2; z++){
             

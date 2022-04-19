@@ -36,6 +36,8 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    
    //full deck array list
    ArrayList<Card> fullDeck = new ArrayList<Card>();
+   //placement pile
+   ArrayList<Card> placementPile = new ArrayList<Card>();
    
    public static void main(String[] args) {
       launch(args);
@@ -82,6 +84,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             serverThread.start();
             btnStart.setText("Stop");
             createDeck();
+            randomize();
             break;
          case "Stop":
             disconnect();
@@ -213,30 +216,39 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             //2 of each number
             for(int z = 0; z < 2; z++){
             
-            if(x == 0){
-               color = "red";
-            }
-            else if(x == 1){
-               color = "yellow";
-            }
-            else if(x == 2){
-               color = "blue";
-            }
-            else if(x == 3){
-               color = "green";
-            }
+               if(x == 0){
+                  color = "red";
+               }
+               else if(x == 1){
+                  color = "yellow";
+               }
+               else if(x == 2){
+                  color = "blue";
+               }
+               else if(x == 3){
+                  color = "green";
+               }
             
-            number = y;
+               number = y;
             //create a Card
-            Card c = new Card(color, number);
+               Card c = new Card(color, number);
             
             //add the card to the full deck
-            fullDeck.add(c);
+               fullDeck.add(c);
             }
          }
       }
       
-      System.out.println("Array Size: " + fullDeck.size());
+      // System.out.println("Array Size: " + fullDeck.size());
+      for(int x2 = 0; x2 < fullDeck.size(); x2++){
+         System.out.println(fullDeck.get(x2).toString());
+      }
+   }
+   
+   //takes the full deck array list and randomizes the order of it
+   public void randomize(){
+      Collections.shuffle(fullDeck);
+      // System.out.println("Array Size: " + fullDeck.size());
       for(int x2 = 0; x2 < fullDeck.size(); x2++){
          System.out.println(fullDeck.get(x2).toString());
       }

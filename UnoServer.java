@@ -7,6 +7,7 @@ import javafx.scene.text.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.geometry.*;
+import java.util.Random;
 
 import java.net.*;
 import java.io.*;
@@ -21,23 +22,30 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    
    public TextArea taLog = new TextArea();
    private Button btnStart = new Button("Start");
+   private Button btnSetup = new Button("Setup");
+   private Button btnSend = new Button("Send Hands");
    
    public ServerSocket ss = null;
    private ServerThread serverThread = null;
    public static final int SERVER_PORT = 54321;
    
    Socket socket;
-   DataInputStream dis = null;
-   DataOutputStream dos = null;
+   ObjectInput ooin = null;
+   ObjectOutputStream oout = null;
+   private Random randomGenerator;
    
    //card variables
    String color;
    int number;
+   Card c = null;
    
    //full deck array list
    ArrayList<Card> fullDeck = new ArrayList<Card>();
    //placement pile
    ArrayList<Card> placementPile = new ArrayList<Card>();
+   //Player hand
+   ArrayList<Card> hand1 = new ArrayList<Card>();
+   ArrayList<Card> hand2 = new ArrayList<Card>();
    
    public static void main(String[] args) {
       launch(args);
@@ -56,7 +64,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       
       FlowPane fpTop = new FlowPane(8,8);
       fpTop.setAlignment(Pos.CENTER);
-      fpTop.getChildren().addAll(btnStart);
+      fpTop.getChildren().addAll(btnStart, btnSetup, btnSend);
       root.getChildren().add(fpTop);
       
       FlowPane fpBot = new FlowPane(8,8);
@@ -67,6 +75,9 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       root.getChildren().add(fpBot);
       
       btnStart.setOnAction(this);
+      btnSetup.setOnAction(this);
+      btnSend.setOnAction(this);
+      
       
       // Show window
       scene = new Scene(root, 500, 200);
@@ -83,13 +94,20 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             serverThread = new ServerThread();
             serverThread.start();
             btnStart.setText("Stop");
-            createDeck();
-            randomize();
             break;
          case "Stop":
             disconnect();
             btnStart.setText("Start");
             break;
+         case "Setup":
+            createDeck();
+            randomize();
+            createHands();
+            break;
+         case "Send Hands":
+            sendHand();
+            break;
+            
                      
       }
    }
@@ -161,6 +179,8 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
                   pw.flush(); // you have to flush the data.
                }
             }
+            
+            
             socket.close();
          }catch(Exception e){
             e.printStackTrace();
@@ -231,7 +251,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             
                number = y;
             //create a Card
-               Card c = new Card(color, number);
+               c = new Card(color, number);
             
             //add the card to the full deck
                fullDeck.add(c);
@@ -239,10 +259,6 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
          }
       }
       
-      // System.out.println("Array Size: " + fullDeck.size());
-      for(int x2 = 0; x2 < fullDeck.size(); x2++){
-         System.out.println(fullDeck.get(x2).toString());
-      }
    }
    
    //takes the full deck array list and randomizes the order of it
@@ -250,8 +266,58 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       Collections.shuffle(fullDeck);
       // System.out.println("Array Size: " + fullDeck.size());
       for(int x2 = 0; x2 < fullDeck.size(); x2++){
-         System.out.println(fullDeck.get(x2).toString());
+         //System.out.println(fullDeck.get(x2).toString());
       }
+     
+   }
+   
+   //takes card out of fulldeck
+   public void pullCard(){
+   
+         
+   }
+   
+   //Creats player hands
+   public void createHands(){
+      System.out.println("Creating Hands!");
+      hand1 = new ArrayList<Card>();
+      
+      for(int x3 = 0; x3 < 7; x3++){
+            
+            hand1.add(fullDeck.get(0));
+            fullDeck.remove(0);
+            System.out.println(hand1.get(x3).toString());
+            
+      }
+      
+      System.out.println("Creating the second hand!");
+      
+      hand2 = new ArrayList<Card>();
+      
+      for(int x3 = 0; x3 < 7; x3++){
+            
+            hand2.add(fullDeck.get(0));
+            fullDeck.remove(0);
+            System.out.println(hand2.get(x3).toString());
+            
+      }
+   }
+   
+   public void sendHand(){
+   
+      try{
+      ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
+
+         //ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+         
+         oout.writeObject(hand1);
+         oout.flush();
+         System.out.println("Sent");
+      }catch(Exception e){
+         e.printStackTrace();
+      }   
+         
+      
    }
  
  

@@ -30,6 +30,9 @@ public class UnoClient extends Application{
    private MenuItem miAdd = new MenuItem("Add Player");
    
    PrintWriter pwt = null;
+   ObjectOutputStream oout = null;
+   
+   ArrayList<Card> handReceived = new ArrayList<Card>(); 
    
    public static final int SERVER_PORT = 12345;
    private Socket socket = null;
@@ -73,6 +76,7 @@ public class UnoClient extends Application{
              switch(label) { //Switch case for buttons
              case "Start":
                 doStart();
+                receiveHand();
                 break;
              case "Stop":
                 doStop();
@@ -98,6 +102,7 @@ public class UnoClient extends Application{
        try{
           socket = new Socket(tfServerIP.getText(), SERVER_PORT);
           pwt = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+          
        
        }catch(Exception e){
           e.printStackTrace();
@@ -106,37 +111,7 @@ public class UnoClient extends Application{
        
        btnStart.setText("Stop");
       
-       // String text = ((MenuItem)evt.getSource()).getText();
-//              System.out.println(text);
-//              try{
-//              
-//              
-//              if(text.equals("Start")){
-//                 
-//                 btnStart.setText("Stop");
-//                 try{
-//                 socket = new Socket(tfServerIP.getText(), SERVER_PORT);
-//                 System.out.println("Connected");
-//                 
-//                 miAdd.setDisable(false);
-//                 
-//                 }catch(IOException ioe) {
-//                    
-//                    return;
-//                 }
-//                 
-//              }else if(text.equals("Stop")){
-//              
-//                 socket.close();
-//                 btnStart.setText("Start");
-//                 
-//                 miAdd.setDisable(true);
-//                 
-//                 System.out.println("dis");
-//              }
-//              }catch(Exception e){
-//                 e.printStackTrace();
-//              }
+      
    }
    
    public void doStop(){
@@ -154,6 +129,30 @@ public class UnoClient extends Application{
       }
       taTemp.appendText("Disconnected!\n");
       btnStart.setText("Start");
+   }
+   
+   public void receiveHand(){
+      try{
+         OutputStream outputStream = socket.getOutputStream();
+               oout = new ObjectOutputStream(outputStream);
+               
+         InputStream inputStream = socket.getInputStream();
+               ObjectInputStream ooin = new ObjectInputStream(inputStream);
+               
+          handReceived = (ArrayList<Card>)ooin.readObject();
+               
+               //flush to print data
+               oout.flush();
+               
+          for (int i = 0; i < handReceived.size(); i++){
+                  System.out.println(handReceived.get(i).toString() +  " , ");
+               } 
+               
+               System.out.println("Received");
+      }catch(Exception e){
+         e.printStackTrace();
+      }
+   
    }
    
 

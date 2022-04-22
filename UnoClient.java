@@ -25,15 +25,22 @@ public class UnoClient extends Application{
    private Button btnConnect = new Button("Connect");
    private TextField tfServerIP = new TextField();
    
+   private Button btnCreateHand = new Button("Create Hand");
+   private Button btnDraw = new Button("Draw");
+   
    private MenuBar menuBar = new MenuBar();
    private Menu mnuPlayer = new Menu("Player");
    private MenuItem miAdd = new MenuItem("Add Player");
    
    PrintWriter pwt = null;
    ObjectOutputStream oout = null;
+   ObjectOutputStream odeck = null;
    
-   ArrayList<Card> handReceived = new ArrayList<Card>(); 
+   
+   //ArrayList<Card> handReceived = new ArrayList<Card>(); 
    ArrayList<Card> deckReceived = new ArrayList<Card>();
+   
+   ArrayList<Card> PlayerHand = new ArrayList<Card>();
    
    public static final int SERVER_PORT = 12345;
    private Socket socket = null;
@@ -51,8 +58,8 @@ public class UnoClient extends Application{
       root = new VBox(menuBar);
       
       FlowPane fpTop = new FlowPane(8,8);
-      fpTop.setAlignment(Pos.CENTER);
-      fpTop.getChildren().addAll(lblName, tfServerIP, btnConnect);
+      fpTop.setAlignment(Pos.CENTER_LEFT);
+      fpTop.getChildren().addAll(lblName, tfServerIP, btnConnect, btnCreateHand, btnDraw);
       root.getChildren().add(fpTop);
       
       FlowPane fpBot = new FlowPane(8,8);
@@ -77,7 +84,8 @@ public class UnoClient extends Application{
              switch(label) { //Switch case for buttons
              case "Connect":
                 doStart();
-                receiveHand();
+                //receiveHand();
+                receiveDeck();
                 break;
              case "Disconnect":
                 doStop();
@@ -91,9 +99,30 @@ public class UnoClient extends Application{
       
       });
       
+      btnCreateHand.setOnAction(new EventHandler<ActionEvent>(){
+         public void handle(ActionEvent ae) {
+         
+            createHand();
+         }
+         });
+      
+      
+      
+      btnDraw.setOnAction(new EventHandler<ActionEvent>(){
+         public void handle(ActionEvent ae) {
+        
+            drawCard();
+            
+         }
+         });
+      
+      
+      
       scene = new Scene(root, 500, 250);
       stage.setScene(scene);
       stage.show();
+      
+
       
    
    }
@@ -132,49 +161,77 @@ public class UnoClient extends Application{
       btnConnect.setText("Connect");
    }
    
-   public void receiveDeck(){
-
-      try{
-         OutputStream outputStream = socket.getOutputStream();
-               oout = new ObjectOutputStream(outputStream);
-
-         InputStream inputStream = socket.getInputStream();
-               ObjectInputStream ooin = new ObjectInputStream(inputStream);
-
-          deckReceived = (ArrayList<Card>)ooin.readObject();
-
-               //flush to print data
-               oout.flush();
-                   System.out.println("-------Received Deck-------");
-      }catch(Exception e){
-         e.printStackTrace();
-      }
-
-   }
+   public void createHand(){
    
-   public void receiveHand(){
-      try{
-         OutputStream outputStream = socket.getOutputStream();
-               oout = new ObjectOutputStream(outputStream);
-               
-         InputStream inputStream = socket.getInputStream();
-               ObjectInputStream ooin = new ObjectInputStream(inputStream);
-               
-          handReceived = (ArrayList<Card>)ooin.readObject();
-               
-               //flush to print data
-               oout.flush();
-               
-          for (int i = 0; i < handReceived.size(); i++){
-                  System.out.println(handReceived.get(i).toString() +  " , ");
-               } 
-               
-               System.out.println("Received");
-      }catch(Exception e){
-         e.printStackTrace();
-      }
+      drawCard();
+      drawCard();
+      drawCard();
+      drawCard();
+      drawCard();
+      drawCard();
+      drawCard();
+      
    
    }
+   
+   public void drawCard(){
+   
+      System.out.println(deckReceived.get(0));
+      PlayerHand.add(deckReceived.get(0));
+      
+      deckReceived.remove(0);
+      System.out.println(PlayerHand.size());
+   
+   
+   }
+   
+    public void receiveDeck(){
+ 
+       try{
+          OutputStream outputStream = socket.getOutputStream();
+                odeck = new ObjectOutputStream(outputStream);
+ 
+          InputStream inputStream = socket.getInputStream();
+                ObjectInputStream inDeck = new ObjectInputStream(inputStream);
+ 
+           deckReceived = (ArrayList<Card>)inDeck.readObject();
+ 
+                //flush to print data
+                odeck.flush();
+                for (int i = 0; i < deckReceived.size(); i++){
+                   System.out.println(deckReceived.get(i).toString() +  " , ");
+                }
+                System.out.println(deckReceived.size());
+                    System.out.println("-------Received Deck-------");
+       }catch(Exception e){
+          e.printStackTrace();
+       }
+ 
+    }
+   
+   // public void receiveHand(){
+//       try{
+//          OutputStream outputStream = socket.getOutputStream();
+//                oout = new ObjectOutputStream(outputStream);
+//                
+//          InputStream inputStream = socket.getInputStream();
+//                ObjectInputStream ooin = new ObjectInputStream(inputStream);
+//                
+//           handReceived = (ArrayList<Card>)ooin.readObject();
+//                
+//                //flush to print data
+//                oout.flush();
+//                
+//           for (int i = 0; i < handReceived.size(); i++){
+//                   System.out.println(handReceived.get(i).toString() +  " , ");
+//                } 
+//                
+//                System.out.println("Received");
+//       }catch(Exception e){
+//          e.printStackTrace();
+//       }
+//    
+//    }
    
 
 }

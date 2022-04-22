@@ -33,6 +33,7 @@ public class UnoClient extends Application{
    ObjectOutputStream oout = null;
    
    ArrayList<Card> handReceived = new ArrayList<Card>(); 
+   ArrayList<Card> deckReceived = new ArrayList<Card>();
    
    public static final int SERVER_PORT = 12345;
    private Socket socket = null;
@@ -129,6 +130,26 @@ public class UnoClient extends Application{
       }
       taTemp.appendText("Disconnected!\n");
       btnConnect.setText("Connect");
+   }
+   
+   public void receiveDeck(){
+
+      try{
+         OutputStream outputStream = socket.getOutputStream();
+               oout = new ObjectOutputStream(outputStream);
+
+         InputStream inputStream = socket.getInputStream();
+               ObjectInputStream ooin = new ObjectInputStream(inputStream);
+
+          deckReceived = (ArrayList<Card>)ooin.readObject();
+
+               //flush to print data
+               oout.flush();
+                   System.out.println("-------Received Deck-------");
+      }catch(Exception e){
+         e.printStackTrace();
+      }
+
    }
    
    public void receiveHand(){

@@ -268,6 +268,18 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       for(int x2 = 0; x2 < fullDeck.size(); x2++){
          //System.out.println(fullDeck.get(x2).toString());
       }
+      try{
+      ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
+
+         //ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+
+         oout.writeObject(fullDeck);
+         oout.flush();
+         System.out.println(fullDeck.size());
+         System.out.println("Sent");
+      }catch(Exception e){
+         e.printStackTrace();
+      }
      
    }
    

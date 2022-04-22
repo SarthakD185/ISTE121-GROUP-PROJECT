@@ -22,7 +22,7 @@ public class UnoClient extends Application{
    
    private Label lblName = new Label("UNO");
    private TextArea taTemp = new TextArea();
-   private Button btnStart = new Button("Start");
+   private Button btnConnect = new Button("Connect");
    private TextField tfServerIP = new TextField();
    
    private MenuBar menuBar = new MenuBar();
@@ -51,7 +51,7 @@ public class UnoClient extends Application{
       
       FlowPane fpTop = new FlowPane(8,8);
       fpTop.setAlignment(Pos.CENTER);
-      fpTop.getChildren().addAll(lblName, tfServerIP, btnStart);
+      fpTop.getChildren().addAll(lblName, tfServerIP, btnConnect);
       root.getChildren().add(fpTop);
       
       FlowPane fpBot = new FlowPane(8,8);
@@ -69,16 +69,16 @@ public class UnoClient extends Application{
       
       });
       
-      btnStart.setOnAction(new EventHandler<ActionEvent>(){
+      btnConnect.setOnAction(new EventHandler<ActionEvent>(){
          public void handle(ActionEvent ae) {
          
              String label = ((Button)ae.getSource()).getText();
              switch(label) { //Switch case for buttons
-             case "Start":
+             case "Connect":
                 doStart();
                 receiveHand();
                 break;
-             case "Stop":
+             case "Disconnect":
                 doStop();
                 break;
                      
@@ -109,7 +109,7 @@ public class UnoClient extends Application{
        }
        taTemp.appendText("Connected!\n");
        
-       btnStart.setText("Stop");
+       btnConnect.setText("Disconnect");
       
       
    }
@@ -128,7 +128,7 @@ public class UnoClient extends Application{
          return;
       }
       taTemp.appendText("Disconnected!\n");
-      btnStart.setText("Start");
+      btnConnect.setText("Connect");
    }
    
    public void receiveHand(){

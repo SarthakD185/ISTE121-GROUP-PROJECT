@@ -22,7 +22,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    
    public TextArea taLog = new TextArea();
    private Button btnStart = new Button("Start");
-   private Button btnSetup = new Button("Setup");
+   private Button btnShuffle = new Button("Shuffle");
    private Button btnSend = new Button("Send Hands");
    
    public ServerSocket ss = null;
@@ -64,7 +64,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       
       FlowPane fpTop = new FlowPane(8,8);
       fpTop.setAlignment(Pos.CENTER);
-      fpTop.getChildren().addAll(btnStart, btnSetup, btnSend);
+      fpTop.getChildren().addAll(btnStart, btnShuffle, btnSend);
       root.getChildren().add(fpTop);
       
       FlowPane fpBot = new FlowPane(8,8);
@@ -75,7 +75,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       root.getChildren().add(fpBot);
       
       btnStart.setOnAction(this);
-      btnSetup.setOnAction(this);
+      btnShuffle.setOnAction(this);
       btnSend.setOnAction(this);
       
       
@@ -93,13 +93,13 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             
             serverThread = new ServerThread();
             serverThread.start();
-            btnStart.setText("Stop");
+            btnStart.setText("End");
             break;
-         case "Stop":
+         case "End":
             disconnect();
             btnStart.setText("Start");
             break;
-         case "Setup":
+         case "Shuffe":
             createDeck();
             randomize();
             createHands();

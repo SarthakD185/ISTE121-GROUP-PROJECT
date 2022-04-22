@@ -35,6 +35,8 @@ public class UnoClient extends Application{
    PrintWriter pwt = null;
    ObjectOutputStream oout = null;
    ObjectOutputStream odeck = null;
+   OutputStream deckBack = null;
+   ObjectOutputStream objectDeckBack = null;
    
    
    //ArrayList<Card> handReceived = new ArrayList<Card>(); 
@@ -86,6 +88,7 @@ public class UnoClient extends Application{
                 doStart();
                 //receiveHand();
                 receiveDeck();
+                
                 break;
              case "Disconnect":
                 doStop();
@@ -176,23 +179,31 @@ public class UnoClient extends Application{
    
    public void drawCard(){
    
+      receiveDeck();
       System.out.println(deckReceived.get(0));
       PlayerHand.add(deckReceived.get(0));
       
       deckReceived.remove(0);
       System.out.println(PlayerHand.size());
+      
+      sendDeckBack();
+      
    
    
    }
+   
+   
+   
+   
    
     public void receiveDeck(){
  
        try{
           OutputStream outputStream = socket.getOutputStream();
-                odeck = new ObjectOutputStream(outputStream);
+                odeck = new ObjectOutputStream(socket.getOutputStream());
  
           InputStream inputStream = socket.getInputStream();
-                ObjectInputStream inDeck = new ObjectInputStream(inputStream);
+                ObjectInputStream inDeck = new ObjectInputStream(socket.getInputStream());
  
            deckReceived = (ArrayList<Card>)inDeck.readObject();
  
@@ -207,6 +218,30 @@ public class UnoClient extends Application{
           e.printStackTrace();
        }
  
+    }
+    
+    public void sendDeckBack(){
+    
+       try{
+       
+          // get the output stream from the socket.
+        OutputStream outputStream = socket.getOutputStream();
+        // create an object output stream from the output stream so we can send an object through it
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+
+        
+
+        System.out.println("Sending messages to the ServerSocket");
+        objectOutputStream.writeObject(deckReceived);
+
+        System.out.println("Closing socket and terminating program.");
+        socket.close();
+          
+       }catch(Exception e){
+          e.printStackTrace();
+       }
+       
+    
     }
    
    // public void receiveHand(){

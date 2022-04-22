@@ -33,7 +33,10 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    Socket socket;
    ObjectInput ooin = null;
    ObjectOutputStream oout = null;
+   ObjectOutputStream oDeckIn = null;
    private Random randomGenerator;
+   InputStream deckIn = null;
+   ObjectInputStream objectDeckIn = null;
    
    //card variables
    String color;
@@ -47,6 +50,8 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    //Player hand
    ArrayList<Card> hand1 = new ArrayList<Card>();
    ArrayList<Card> hand2 = new ArrayList<Card>();
+   
+   ArrayList<Card> newDeck = new ArrayList<Card>();
    
    public static void main(String[] args) {
       launch(args);
@@ -307,11 +312,32 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
        }
     }
    
-   //takes card out of fulldeck
-   public void pullCard(){
-   
-         
-   }
+   public void receivedNewDeck(){
+       try{
+          
+          fullDeck.clear();
+          // get the input stream from the connected socket
+        InputStream inputStream = socket.getInputStream();
+        // create a DataInputStream so we can read data from it.
+        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+
+        // read the list of messages from the socket
+       fullDeck = (ArrayList<Card>) objectInputStream.readObject();
+        System.out.println("Received [" + fullDeck.size() + "] messages from: " + socket);
+        
+        System.out.println(fullDeck.size());
+
+        System.out.println("Closing sockets.");
+        ss.close();
+        socket.close();
+          
+          
+       }catch(Exception e){
+          e.printStackTrace();
+       }
+       
+       
+    }
    
    // //Creats player hands
 //    public void createHands(){

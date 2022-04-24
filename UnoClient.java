@@ -13,7 +13,7 @@ import java.net.*;
 import java.io.*;
 
 
-public class UnoClient extends Application{
+public class UnoClient extends Application implements EventHandler<ActionEvent>{
 
    //Window attributes
    private Stage stage;
@@ -69,59 +69,13 @@ public class UnoClient extends Application{
       
       //disabled buttons until after client is connected to server
       btnCreateHand.setDisable(true);
-      btnDraw.setDisable(true);
+      //btnDraw.setDisable(true);
       btnPlace.setDisable(true);
       
-      btnConnect.setOnAction(
-         new EventHandler<ActionEvent>(){
-            public void handle(ActionEvent ae) {
-            
-               String label = ((Button)ae.getSource()).getText();
-               switch(label) { //Switch case for buttons
-                  case "Connect":
-                     doStart();
-                     btnCreateHand.setDisable(false);
-                  //receiveHand();
-                     receiveDeck();
-                  
-                     break;
-                  case "Disconnect":
-                     doStop();
-                     break;
-               
-               }
-            } 
-         });
       
-      btnCreateHand.setOnAction(
-         new EventHandler<ActionEvent>(){
-            public void handle(ActionEvent ae) {
-               btnDraw.setDisable(false);
-               btnPlace.setDisable(false);
-               createHand();
-            }
-         });
-      
-      
-      
-      btnDraw.setOnAction(
-         new EventHandler<ActionEvent>(){
-            public void handle(ActionEvent ae) {
-            
-               drawCard();
-            
-            }
-         });
-         
-       
-      btnPlace.setOnAction(
-         new EventHandler<ActionEvent>(){
-            public void handle(ActionEvent ae) {
-            
-            //placeCard();
-            
-            }
-         });
+      btnConnect.setOnAction(this);
+      btnCreateHand.setOnAction(this);
+      btnDraw.setOnAction(this);
       
       
       
@@ -132,6 +86,27 @@ public class UnoClient extends Application{
    
       
    
+   }
+   
+   public void handle(ActionEvent ae) {
+      String label = ((Button)ae.getSource()).getText();
+      switch(label) { //Switch case for buttons
+         case "Connect":
+            doStart();
+            //receiveDeck();
+            break;
+         case "Disconnect":
+            doStop();
+            break;
+         case "Draw":
+            drawCard();
+
+            break;
+         case "Create Hand":
+
+            break;
+
+      }
    }
    
    public void doStart(){
@@ -195,7 +170,7 @@ public class UnoClient extends Application{
       System.out.println("Player 1 hand: " + PlayerHand.size());
       System.out.println("DECK SIZE: " + deckReceived.size());
    
-      sendDeckBack();
+      //sendDeckBack();
    }
    
    

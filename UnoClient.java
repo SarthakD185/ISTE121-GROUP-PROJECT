@@ -13,7 +13,7 @@ import java.net.*;
 import java.io.*;
 
 
-public class UnoClient extends Application{
+public class UnoClient extends Application implements EventHandler<ActionEvent>{
 
    //Window attributes
    private Stage stage;
@@ -33,10 +33,11 @@ public class UnoClient extends Application{
    private MenuItem miAdd = new MenuItem("Add Player");
    
    PrintWriter pwt = null;
-   ObjectOutputStream oout = null;
+   
    ObjectOutputStream odeck = null;
    OutputStream deckBack = null;
-   ObjectOutputStream objectDeckBack = null;
+   ObjectOutputStream oSendDeckBack = null;
+   
    
    
    //ArrayList<Card> handReceived = new ArrayList<Card>(); 
@@ -71,54 +72,12 @@ public class UnoClient extends Application{
       
       miAdd.setDisable(true);
       
-      //to make button do something 
-      miAdd.setOnAction(new EventHandler<ActionEvent>(){
-         public void handle(ActionEvent evt) {
-         
-         }
       
-      });
+      btnConnect.setOnAction(this);
+      btnDraw.setOnAction(this);
+      btnCreateHand.setOnAction(this);
       
-      btnConnect.setOnAction(new EventHandler<ActionEvent>(){
-         public void handle(ActionEvent ae) {
-         
-             String label = ((Button)ae.getSource()).getText();
-             switch(label) { //Switch case for buttons
-             case "Connect":
-                doStart();
-                //receiveHand();
-                receiveDeck();
-                
-                break;
-             case "Disconnect":
-                doStop();
-                break;
-                     
-            
 
-            
-         }
-         }
-      
-      });
-      
-      btnCreateHand.setOnAction(new EventHandler<ActionEvent>(){
-         public void handle(ActionEvent ae) {
-         
-            createHand();
-         }
-         });
-      
-      
-      
-      btnDraw.setOnAction(new EventHandler<ActionEvent>(){
-         public void handle(ActionEvent ae) {
-        
-            drawCard();
-            
-         }
-         });
-      
       
       
       scene = new Scene(root, 500, 250);
@@ -128,6 +87,27 @@ public class UnoClient extends Application{
 
       
    
+   }
+   
+   public void handle(ActionEvent ae) {
+      String label = ((Button)ae.getSource()).getText();
+      switch(label) { //Switch case for buttons
+         case "Connect":
+            doStart();
+            //receiveDeck();
+            break;
+         case "Disconnect":
+            doStop();
+            break;
+         case "Draw":
+            drawCard();
+            
+            break;
+         case "Create Hand":
+            
+            break;
+                     
+      }
    }
    
    public void doStart(){
@@ -164,46 +144,15 @@ public class UnoClient extends Application{
       btnConnect.setText("Connect");
    }
    
-   public void createHand(){
-   
-      drawCard();
-      drawCard();
-      drawCard();
-      drawCard();
-      drawCard();
-      drawCard();
-      drawCard();
-      
-   
-   }
-   
-   public void drawCard(){
-   
-      receiveDeck();
-      System.out.println(deckReceived.get(0));
-      PlayerHand.add(deckReceived.get(0));
-      
-      deckReceived.remove(0);
-      System.out.println(PlayerHand.size());
-      
-      sendDeckBack();
-      
-   
-   
-   }
-   
-   
-   
-   
    
     public void receiveDeck(){
  
        try{
           OutputStream outputStream = socket.getOutputStream();
-                odeck = new ObjectOutputStream(socket.getOutputStream());
+                odeck = new ObjectOutputStream(outputStream);
  
           InputStream inputStream = socket.getInputStream();
-                ObjectInputStream inDeck = new ObjectInputStream(socket.getInputStream());
+                ObjectInputStream inDeck = new ObjectInputStream(inputStream);
  
            deckReceived = (ArrayList<Card>)inDeck.readObject();
  
@@ -225,17 +174,18 @@ public class UnoClient extends Application{
        try{
        
           // get the output stream from the socket.
-        OutputStream outputStream = socket.getOutputStream();
+        deckBack = socket.getOutputStream();
         // create an object output stream from the output stream so we can send an object through it
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+        oSendDeckBack = new ObjectOutputStream(deckBack);
 
         
 
         System.out.println("Sending messages to the ServerSocket");
-        objectOutputStream.writeObject(deckReceived);
+        oSendDeckBack.writeObject(deckReceived);
+        oSendDeckBack.flush();
 
         System.out.println("Closing socket and terminating program.");
-        socket.close();
+        
           
        }catch(Exception e){
           e.printStackTrace();
@@ -243,6 +193,40 @@ public class UnoClient extends Application{
        
     
     }
+    
+    public void drawCard(){
+   
+      System.out.println("Starting DRAW");
+      
+      receiveDeck();
+      System.out.println("Received Deck");
+      System.out.println(deckReceived.get(0));
+      System.out.println("Player 1 hand: " + PlayerHand.size());
+      PlayerHand.add(deckReceived.get(0));
+      
+      System.out.println("Removing card from deck");
+      deckReceived.remove(0);
+      System.out.println("Player 1 hand: " + PlayerHand.size());
+      System.out.println("DECK SIZE: " + deckReceived.size());
+      
+      sendDeckBack();
+      
+   
+   
+   }
+   
+   public void createHand(){
+   
+      drawCard();
+      drawCard();
+      drawCard();
+      drawCard();
+      drawCard();
+      drawCard();
+      drawCard();
+      
+   
+   }
    
    // public void receiveHand(){
 //       try{

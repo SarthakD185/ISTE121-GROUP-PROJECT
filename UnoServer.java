@@ -8,6 +8,14 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.geometry.*;
 import java.util.Random;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.text.Text;
 
 import java.net.*;
 import java.io.*;
@@ -25,6 +33,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    private Button btnShuffle = new Button("Shuffle");
    private Button btnSend = new Button("Send Hands");
    private Button btnCreateDeck = new Button("Create Deck");
+   private Label lblShowCard = new Label("");
    
    public ServerSocket ss = null;
    private ServerThread serverThread = null;
@@ -77,7 +86,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       fpBot.setAlignment(Pos.CENTER);
       taLog.setPrefRowCount(10);
       taLog.setPrefColumnCount(35);
-      fpBot.getChildren().addAll(taLog);
+      fpBot.getChildren().addAll(lblShowCard);
       root.getChildren().add(fpBot);
       
       btnStart.setOnAction(this);
@@ -86,9 +95,12 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       btnCreateDeck.setOnAction(this);
       
       
+      
+      
       // Show window
       scene = new Scene(root, 500, 200);
       stage.setScene(scene);
+      
       stage.show();
       
    }
@@ -117,11 +129,12 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             break;
          case "Send Hands":
             sendDeck();
+            deleteDeck();
             //sendHand();
             break;
          case "Create Deck":
          
-            deleteDeck();
+            
             createDeck();
             break;
             
@@ -198,7 +211,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             }
             
             
-            socket.close();
+            //socket.close();
          }catch(Exception e){
             e.printStackTrace();
          }   
@@ -254,16 +267,16 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             for(int z = 0; z < 2; z++){
             
                if(x == 0){
-                  color = "red";
+                  color = "RED";
                }
                else if(x == 1){
-                  color = "yellow";
+                  color = "YELLOW";
                }
                else if(x == 2){
-                  color = "blue";
+                  color = "BLUE";
                }
                else if(x == 3){
-                  color = "green";
+                  color = "GREEN";
                }
             
                number = y;
@@ -287,6 +300,8 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       for(int x2 = 0; x2 < fullDeck.size(); x2++){
          System.out.println(fullDeck.get(x2).toString());
       }
+      stylizeCard();
+      
       
      
    }
@@ -328,15 +343,40 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
         System.out.println(fullDeck.size());
 
         System.out.println("Closing sockets.");
-        ss.close();
-        socket.close();
+        // ss.close();
+//         socket.close();
           
           
        }catch(Exception e){
           e.printStackTrace();
        }
-       
-       
+    }
+    
+    public void stylizeCard(){
+    
+      lblShowCard.setText("" + fullDeck.get(0).getNumber());
+      if(fullDeck.get(0).getColor() == "RED"){
+         lblShowCard.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+         lblShowCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(fullDeck.get(0).getColor() == "GREEN"){
+         lblShowCard.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+         lblShowCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(fullDeck.get(0).getColor() == "BLUE"){
+         lblShowCard.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+         lblShowCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(fullDeck.get(0).getColor() == "YELLOW"){
+         lblShowCard.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
+         lblShowCard.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
+      }
+      
+      lblShowCard.setPrefHeight(100);
+      lblShowCard.setPrefWidth(50);
+      lblShowCard.setAlignment(Pos.CENTER);
+      
+      
+     
+      
+    
     }
    
    // //Creats player hands

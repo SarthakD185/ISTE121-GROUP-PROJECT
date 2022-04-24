@@ -6,11 +6,21 @@ import javafx.scene.control.Alert.*;
 import javafx.scene.text.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
-import javafx.collections.*;
 import javafx.geometry.*;
-import java.util.*;
+import java.util.Random;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.text.Text;
+
 import java.net.*;
 import java.io.*;
+
+import java.util.*;
 
 
 public class UnoClient extends Application implements EventHandler<ActionEvent>{
@@ -28,6 +38,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    private Button btnCreateHand = new Button("Create Hand");
    private Button btnDraw = new Button("Draw");
    private Button btnPlace = new Button("Place");
+   private Label lblCard1 = new Label("");
       
    PrintWriter pwt = null;
    ObjectOutputStream odeck = null;
@@ -64,7 +75,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       
       FlowPane fpBot = new FlowPane(8,8);
       fpBot.setAlignment(Pos.CENTER);
-      fpBot.getChildren().addAll(taTemp);
+      fpBot.getChildren().addAll(lblCard1);
       root.getChildren().add(fpBot);
       
       //disabled buttons until after client is connected to server
@@ -100,7 +111,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
             break;
          case "Draw":
             drawCard();
-
+            showHand();
             break;
          case "Create Hand":
 
@@ -164,11 +175,14 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       System.out.println(deckReceived.get(0));
       System.out.println("Player 1 hand: " + PlayerHand.size());
       PlayerHand.add(deckReceived.get(0));
+      
    
       System.out.println("Removing card from deck");
       deckReceived.remove(0);
       System.out.println("Player 1 hand: " + PlayerHand.size());
       System.out.println("DECK SIZE: " + deckReceived.size());
+      
+      
    
       //sendDeckBack();
    }
@@ -221,6 +235,30 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       }catch(Exception e){
          e.printStackTrace();
       }
+   }
+   
+   public void showHand(){
+   
+   lblCard1.setText("" + PlayerHand.get(0).getNumber());
+   
+   if(PlayerHand.get(0).getColor() == "RED"){
+         lblCard1.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+         lblCard1.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(PlayerHand.get(0).getColor() == "GREEN"){
+         lblCard1.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+         lblCard1.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(PlayerHand.get(0).getColor() == "BLUE"){
+         lblCard1.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+         lblCard1.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(PlayerHand.get(0).getColor() == "YELLOW"){
+         lblCard1.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
+         lblCard1.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
+      }
+      
+      lblCard1.setPrefHeight(100);
+      lblCard1.setPrefWidth(50);
+      lblCard1.setAlignment(Pos.CENTER);
+   
    }
    
    // public void receiveHand(){

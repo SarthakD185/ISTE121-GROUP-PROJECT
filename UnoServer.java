@@ -25,23 +25,48 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    private Button btnShuffle = new Button("Shuffle");
    private Button btnSend = new Button("Send Hands");
    private Button btnCreateDeck = new Button("Create Deck");
+<<<<<<< Updated upstream
+=======
+   private Button btnReceiveNewDeck = new Button("Receive New Deck");
+   private Label lblShowCard = new Label("");
+>>>>>>> Stashed changes
    
    public ServerSocket ss = null;
    private ServerThread serverThread = null;
    public static final int SERVER_PORT = 54321;
    
    Socket socket;
+<<<<<<< Updated upstream
    ObjectInput ooin = null;
    ObjectOutputStream oout = null;
    private Random randomGenerator;
+=======
+   
+   private Random randomGenerator;
+   
+>>>>>>> Stashed changes
    
    //card variables
    String color;
    int number;
    Card c = null;
    
+   //INPUTS AND OUTPUTS STREAMS 
+   
+   OutputStream osServer = null;
+   ObjectOutputStream objOsServer = null;
+   InputStream isServer = null;
+   ObjectInputStream objIsServer = null;
+   
+   
+   
+   
+   
    //full deck array list
    ArrayList<Card> fullDeck = new ArrayList<Card>();
+   
+   //new deck for full deck
+   ArrayList<Card> alteredDeck = new ArrayList<Card>();
    //placement pile
    ArrayList<Card> placementPile = new ArrayList<Card>();
    //Player hand
@@ -65,7 +90,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       
       FlowPane fpTop = new FlowPane(8,8);
       fpTop.setAlignment(Pos.CENTER);
-      fpTop.getChildren().addAll(btnStart, btnShuffle, btnSend, btnCreateDeck);
+      fpTop.getChildren().addAll(btnStart, btnShuffle, btnSend, btnCreateDeck, btnReceiveNewDeck);
       root.getChildren().add(fpTop);
       
       FlowPane fpBot = new FlowPane(8,8);
@@ -79,6 +104,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       btnShuffle.setOnAction(this);
       btnSend.setOnAction(this);
       btnCreateDeck.setOnAction(this);
+      btnReceiveNewDeck.setOnAction(this);
       
       
       // Show window
@@ -116,8 +142,14 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             break;
          case "Create Deck":
          
+<<<<<<< Updated upstream
             deleteDeck();
+=======
+>>>>>>> Stashed changes
             createDeck();
+            break;
+         case "Receive New Deck":
+            receiveNewDeck();
             break;
             
                      
@@ -138,6 +170,8 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
                Socket s = ss.accept();
                System.out.println("Request received from " + s.getInetAddress().getHostName());
                new ProcessThread(s).start();
+               
+               
             
             }
          }
@@ -158,24 +192,14 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    
    class ProcessThread extends Thread {
    
-      
-      
       public ProcessThread(Socket s)
       {
          socket = s;
       }
       
       public void run(){
-      
-         try{
-            String ip = socket.getInetAddress().getHostName();
-            
-            taLog.appendText("Accepting connection from " + ip + "\n");
-            
-            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            
-            PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
          
+<<<<<<< Updated upstream
             while(true){
                String data = br.readLine();
                System.out.println("Client Sent Data: " + data);
@@ -200,30 +224,32 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
            
             
             
+=======
+         
+>>>>>>> Stashed changes
       
       }
-      
       
    } 
    
    public void createDeck(){
       //create the zero cards
-      Card c1 = new Card("red", 0);
-      Card c2 = new Card("yellow", 0);
-      Card c3 = new Card("blue", 0);
-      Card c4 = new Card("green", 0);
+      Card c1 = new Card("RED", 0);
+      Card c2 = new Card("YELLOW", 0);
+      Card c3 = new Card("BLUE", 0);
+      Card c4 = new Card("GREEN", 0);
       
       //create the WILD cards
-      Card c5 = new Card("wild", 0);
-      Card c6 = new Card("wild", 0);
-      Card c7 = new Card("wild", 0);
-      Card c8 = new Card("wild", 0);
+      Card c5 = new Card("WILD", 0);
+      Card c6 = new Card("WILD", 0);
+      Card c7 = new Card("WILD", 0);
+      Card c8 = new Card("WILD", 0);
       
       //create the WILD +4 cards
-      Card c9 = new Card("wild+4", 0);
-      Card c10 = new Card("wild+4", 0);
-      Card c11 = new Card("wild+4", 0);
-      Card c12 = new Card("wild+4", 0);
+      Card c9 = new Card("WILD+4", 0);
+      Card c10 = new Card("WILD+4", 0);
+      Card c11 = new Card("WILD+4", 0);
+      Card c12 = new Card("WILD+4", 0);
             
       //add the zero cards to the full deck
       fullDeck.add(c1);
@@ -260,6 +286,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
                else if(x == 3){
                   color = "green";
                }
+               
             
                number = y;
             //create a Card
@@ -286,32 +313,92 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
      
    }
    
-   public void deleteDeck(){
-      
-      fullDeck.clear();
-   }
    
-    public void sendDeck(){
-    
-       try{
-       ObjectOutputStream odeck = new ObjectOutputStream(socket.getOutputStream());
- 
-          //ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
- 
-          odeck.writeObject(fullDeck);
-          odeck.flush();
-          System.out.println(fullDeck.size());
-          System.out.println("Sent");
-       }catch(Exception e){
-          e.printStackTrace();
-       }
-    }
+     public void sendDeck(){
+     
+        try{
+           
+           
+           objOsServer = new ObjectOutputStream(socket.getOutputStream());
+           
+           objOsServer.writeObject(fullDeck);
+           objOsServer.flush();
+           
+           System.out.println(fullDeck.size());
+           System.out.println("Sent");
+        }catch(Exception e){
+           e.printStackTrace();
+        }
+     }
    
+<<<<<<< Updated upstream
    //takes card out of fulldeck
    public void pullCard(){
    
          
    }
+=======
+   public void receiveNewDeck(){
+       try{
+       
+         fullDeck.clear();
+         
+         osServer = socket.getOutputStream();
+         objOsServer = new ObjectOutputStream(osServer);
+         
+         isServer = socket.getInputStream();
+         objIsServer = new ObjectInputStream(isServer);
+         
+         alteredDeck = (ArrayList<Card>)objIsServer.readObject();
+         objOsServer.flush();
+       
+         
+         for (int i = 0; i < alteredDeck.size(); i++){
+            System.out.println(alteredDeck.get(i).toString() +  " , ");
+         }
+         System.out.println(alteredDeck.size());
+         System.out.println("-------Received New Deck-------");
+         
+          
+
+          
+       }catch(Exception e){
+          e.printStackTrace();
+       }
+    }
+    
+    public void deleteDeck(){
+      
+      fullDeck.clear();
+   }
+    
+    public void stylizeCard(){
+    
+      lblShowCard.setText("" + fullDeck.get(0).getNumber());
+      if(fullDeck.get(0).getColor() == "RED"){
+         lblShowCard.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+         lblShowCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(fullDeck.get(0).getColor() == "GREEN"){
+         lblShowCard.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+         lblShowCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(fullDeck.get(0).getColor() == "BLUE"){
+         lblShowCard.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+         lblShowCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(fullDeck.get(0).getColor() == "YELLOW"){
+         lblShowCard.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
+         lblShowCard.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
+      }else if(fullDeck.get(0).getColor() == "WILD" || fullDeck.get(0).getColor() == "WILD+4"){
+         lblShowCard.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+         lblShowCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }
+      
+      lblShowCard.setPrefHeight(100);
+      lblShowCard.setPrefWidth(50);
+      lblShowCard.setAlignment(Pos.CENTER);
+    
+    
+    }
+>>>>>>> Stashed changes
    
    // //Creats player hands
 //    public void createHands(){

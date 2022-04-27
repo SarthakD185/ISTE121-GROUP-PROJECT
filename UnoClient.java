@@ -60,6 +60,9 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    OutputStream osClient = null;
    ObjectOutputStream objOsClient = null;
    
+   private ObjectInputStream ooi = null;
+   private ObjectOutputStream oos = null;
+   
    InputStream isClient = null;
    ObjectInputStream objIsClient = null;
    
@@ -160,8 +163,11 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    public void doStart(){
    
       try{
-         socket = new Socket(tfServerIP.getText(), SERVER_PORT);
-         pwt = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+         socket = new Socket(tfServerIP.getText(), 12345);
+         oos = new ObjectOutputStream(socket.getOutputStream());
+         ooi = new ObjectInputStream(socket.getInputStream());
+         
+         new ReceiveMsgThread().start();
           
        
       }catch(Exception e){
@@ -519,16 +525,28 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
          lblCard7.setPrefHeight(100);
          lblCard7.setPrefWidth(50);
          lblCard7.setAlignment(Pos.CENTER);
-         
-         
-       
-
-
+   
       
       }
+      
+      class ReceiveMsgThread extends Thread {
+      public void run() {
+         System.out.println("Client Thread Running");
+         
+         String message = "";
+         try {
+            //Loop to keep listening
+            while(true) {
+            
+            }                  
+         } catch(Exception ex) {
+            ex.printStackTrace();
+         }
+      }
+   }
    
-   
-
 }
+
+
 
    

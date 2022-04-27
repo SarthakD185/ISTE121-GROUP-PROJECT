@@ -37,7 +37,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    private Label lblShowCard = new Label("");
    
    public ServerSocket ss = null;
-   private ServerThread serverThread = null;
+   
    public static final int SERVER_PORT = 54321;
    
    Socket socket;
@@ -123,8 +123,13 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       switch(label) {
          case "Start":
             
-            serverThread = new ServerThread();
-            serverThread.start();
+            Thread t1 = 
+            new Thread() {
+               public void run() {
+                  doServerStuff();
+               }
+            };
+            t1.start();
             btnStart.setText("End");
             break;
          case "End":
@@ -156,29 +161,48 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
                      
       }
    }
-    
-    
-   class ServerThread extends Thread{
-      private ServerSocket sSocket = null;
-      public void run() {
-      
-         try
-         {
-            ss = new ServerSocket(12345);
-         
-            while(true)
-            {
-               Socket s = ss.accept();
-               System.out.println("Request received from " + s.getInetAddress().getHostName());
-               new ProcessThread(s).start();
-               
-               
-            
-            }
+   
+   
+   private void doServerStuff() {
+      try {
+         ServerSocket sSocket = new ServerSocket(12345);
+         while(true) {
+            Socket socket1 = sSocket.accept();
+            Thread t2 = new ClientThread(socket1);
+            t2.start();
          }
-         catch(Exception ex)
-         {
-            ex.printStackTrace();
+      }
+      catch(Exception e) {
+      }
+   } 
+    
+   class ClientThread extends Thread{
+      private ServerSocket sSocket = null;
+      Socket socket2 = null;
+      Scanner scn = null;
+      ObjectInputStream ooi = null;
+      ObjectOutputStream oos = null;
+      
+      /** constructor */
+      public ClientThread(Socket _cSocket) {
+         socket2 = _cSocket;
+      }
+      
+      public void run() {
+      try {
+            ooi = new ObjectInputStream(socket2.getInputStream());
+            oos = new ObjectOutputStream(socket2.getOutputStream());
+            
+         
+            while(true) {
+                
+            }  //while
+            
+            // pw.close();
+            // scn.close();
+            //socket2.close();
+         }  // try
+         catch(Exception e) {
          }
       
       }

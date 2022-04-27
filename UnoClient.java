@@ -38,23 +38,23 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    private Button btnCreateHand = new Button("Create Hand");
    private Button btnDraw = new Button("Draw");
    private Button btnPlace = new Button("Place");
-   private Label lblCard1 = new Label("");
-   private Label lblCard2 = new Label("");
-   private Label lblCard3 = new Label("");
-   private Label lblCard4 = new Label("");
-   private Label lblCard5 = new Label("");
-   private Label lblCard6 = new Label("");
-   private Label lblCard7 = new Label("");
+   private Label lblCard1 = new Label("Card 1");
+   private Label lblCard2 = new Label("Card 2");
+   private Label lblCard3 = new Label("Card 3");
+   private Label lblCard4 = new Label("Card 4");
+   private Label lblCard5 = new Label("Card 5");
+   private Label lblCard6 = new Label("Card 6");
+   private Label lblCard7 = new Label("Card 7");
+   private RadioButton rb1 = new RadioButton("Card 1");
+   private RadioButton rb2 = new RadioButton("Card 2");
+   private RadioButton rb3 = new RadioButton("Card 3");
+   private RadioButton rb4 = new RadioButton("Card 4");
+   private RadioButton rb5 = new RadioButton("Card 5");
+   private RadioButton rb6 = new RadioButton("Card 6");
+   private RadioButton rb7 = new RadioButton("Card 7");
    
    TextInputDialog dialogPlace = null;
-   String dialogInput = null;
-   
-   int cardPos;
-   
-   
-   
-   //NEEDED FOR SERVER   
-   PrintWriter pwt = null;
+   String dialogInput = null;   
    
    //Input and output streams
    OutputStream osClient = null;
@@ -66,13 +66,10 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    InputStream isClient = null;
    ObjectInputStream objIsClient = null;
    
-   
-   
-   
-   //ArrayList<Card> handReceived = new ArrayList<Card>(); 
    ArrayList<Card> handReceived = new ArrayList<Card>();
-   
    ArrayList<Card> PlayerHand = new ArrayList<Card>();
+   
+   Card c = new Card(null, 0);
    
    public static final int SERVER_PORT = 12345;
    private Socket socket = null;
@@ -101,8 +98,17 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       fpBot.getChildren().addAll(lblCard1, lblCard2, lblCard3, lblCard4, lblCard5, lblCard6, lblCard7);
       root.getChildren().add(fpBot);
       
-     
-      
+      FlowPane fpBot2 = new FlowPane(8,8);
+      fpBot.setAlignment(Pos.CENTER);
+      fpBot.getChildren().addAll(rb1, rb2, rb3, rb4, rb5, rb6, rb7);
+      rb1.setVisible(false);
+      rb2.setVisible(false);
+      rb3.setVisible(false);
+      rb4.setVisible(false);
+      rb5.setVisible(false);
+      rb6.setVisible(false);
+      rb7.setVisible(false);
+      root.getChildren().add(fpBot2);      
       
       btnConnect.setOnAction(this);
       btnCreateHand.setOnAction(this);
@@ -138,22 +144,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
             createHand();
             
             break;
-         case "Place":
-            String text = ((Button)ae.getSource()).getText();
-            if(text.equals("Place")){
-               dialogPlace = new TextInputDialog();
-               
-               dialogPlace.setTitle("Place Card");
-               dialogPlace.setHeaderText("Choose a card to place (0 is left most card and 6 is right most card)");
-               dialogPlace.setContentText("Enter the number:");
-               dialogPlace.showAndWait();
-               
-               
-            }
-            dialogInput = dialogPlace.getEditor().getText();
-            System.out.println(dialogInput);
-            
-            
+         case "Place":            
             break;
        
 
@@ -198,14 +189,6 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    }
    
    public void createHand(){
-   
-      // drawCard();
-//       drawCard();
-//       drawCard();
-//       drawCard();
-//       drawCard();
-//       drawCard();
-//       drawCard();
       
       receiveCards();
 
@@ -219,9 +202,6 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       
       System.out.println("Hand Size: " + handReceived.size());
 
-      
-      
-      
       showHand();
       
       System.out.println("Player 1 hand: " + PlayerHand.size());
@@ -265,10 +245,6 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       
       System.out.println("Player 1 hand: " + PlayerHand.size());
       System.out.println("DECK SIZE: " + handReceived.size());
-      
-      
-   
-      //sendDeckBack();
    }
    
    
@@ -302,26 +278,15 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    
    }
    
-    
-    public void sendDeckBack(){
-       try{
-         
-         objOsClient.writeObject(handReceived);
-         objOsClient.flush();
-         
-       
-         System.out.println("Closing socket and terminating program.");
-         
-       
-       }catch(Exception e){
-          e.printStackTrace();
-       }
-    }
-   
    public void showHand(){
-  
+      rb1.setVisible(true);
+      rb2.setVisible(true);
+      rb3.setVisible(true);
+      rb4.setVisible(true);
+      rb5.setVisible(true);
+      rb6.setVisible(true);
+      rb7.setVisible(true);
       checkColor();
-        
       
       }
       
@@ -546,7 +511,3 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    }
    
 }
-
-
-
-   

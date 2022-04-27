@@ -65,7 +65,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    ArrayList<Card> fullDeck = new ArrayList<Card>();
    
    //new deck for full deck
-   ArrayList<Card> alteredDeck = new ArrayList<Card>();
+   ArrayList<Card> Hand = new ArrayList<Card>();
    //placement pile
    ArrayList<Card> placementPile = new ArrayList<Card>();
    //Player hand
@@ -141,8 +141,8 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             
             break;
          case "Send Hands":
-            sendDeck();
-            deleteDeck();
+            pullCards();
+            
             //sendHand();
             break;
          case "Create Deck":
@@ -150,7 +150,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             createDeck();
             break;
          case "Receive New Deck":
-            receiveNewDeck();
+            //receiveNewDeck();
             break;
             
                      
@@ -289,52 +289,75 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
      
    }
    
+   //TAKES 7 CARDS AND SENDS THEM TO THE CLIENT.
+   public void pullCards(){
    
-     public void sendDeck(){
-     
-        try{
-           
-           
-           objOsServer = new ObjectOutputStream(socket.getOutputStream());
-           
-           objOsServer.writeObject(fullDeck);
-           objOsServer.flush();
-           
-           System.out.println(fullDeck.size());
-           System.out.println("Sent");
-        }catch(Exception e){
-           e.printStackTrace();
-        }
-     }
+      for(int i = 0; i <= 6; i++){
+         Hand.add(fullDeck.get(0));
+         fullDeck.remove(0);
+      }
+      
+      try{
+      objOsServer = new ObjectOutputStream(socket.getOutputStream());
+            
+      objOsServer.writeObject(Hand);
+      objOsServer.flush();
+            
+      System.out.println(fullDeck.size());
+      System.out.println(Hand.size());
+      System.out.println("Sent");
+      }catch(Exception e){
+         e.printStackTrace();
+      }
    
-   public void receiveNewDeck(){
-       try{
-       
-         fullDeck.clear();
-         
-         osServer = socket.getOutputStream();
-         objOsServer = new ObjectOutputStream(osServer);
-         
-         isServer = socket.getInputStream();
-         objIsServer = new ObjectInputStream(isServer);
-         
-         alteredDeck = (ArrayList<Card>)objIsServer.readObject();
-         objOsServer.flush();
-         
-         
-         for (int i = 0; i < alteredDeck.size(); i++){
-            System.out.println(alteredDeck.get(i).toString() +  " , ");
-         }
-         System.out.println(alteredDeck.size());
-         System.out.println("-------Received New Deck-------");
-         
-          
-
-          
-       }catch(Exception e){
-          e.printStackTrace();
-       }
-    }
+   }
+   
+   
+     // public void sendDeck(){
+//      
+//         try{
+//            
+//            
+//            objOsServer = new ObjectOutputStream(socket.getOutputStream());
+//            
+//            objOsServer.writeObject(fullDeck);
+//            objOsServer.flush();
+//            
+//            System.out.println(fullDeck.size());
+//            System.out.println("Sent");
+//         }catch(Exception e){
+//            e.printStackTrace();
+//         }
+//      }
+//    
+//    public void receiveNewDeck(){
+//        try{
+//        
+//          fullDeck.clear();
+//          
+//          osServer = socket.getOutputStream();
+//          objOsServer = new ObjectOutputStream(osServer);
+//          
+//          isServer = socket.getInputStream();
+//          objIsServer = new ObjectInputStream(isServer);
+//          
+//          alteredDeck = (ArrayList<Card>)objIsServer.readObject();
+//          objOsServer.flush();
+//        
+//          
+//          for (int i = 0; i < alteredDeck.size(); i++){
+//             System.out.println(alteredDeck.get(i).toString() +  " , ");
+//          }
+//          System.out.println(alteredDeck.size());
+//          System.out.println("-------Received New Deck-------");
+//          
+//           
+// 
+//           
+//        }catch(Exception e){
+//           e.printStackTrace();
+//        }
+//     }
     
     public void deleteDeck(){
       
@@ -368,48 +391,8 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
     
     }
    
-   // //Creats player hands
-//    public void createHands(){
-//       System.out.println("Creating Hands!");
-//       hand1 = new ArrayList<Card>();
-//       
-//       for(int x3 = 0; x3 < 7; x3++){
-//             
-//             hand1.add(fullDeck.get(0));
-//             fullDeck.remove(0);
-//             System.out.println(hand1.get(x3).toString());
-//             
-//       }
-//       
-//       System.out.println("Creating the second hand!");
-//       
-//       hand2 = new ArrayList<Card>();
-//       
-//       for(int x3 = 0; x3 < 7; x3++){
-//             
-//             hand2.add(fullDeck.get(0));
-//             fullDeck.remove(0);
-//             System.out.println(hand2.get(x3).toString());
-//             
-//       }
-//    }
-   
-   // public void sendHand(){
-//    
-//       try{
-//       ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
-// 
-//          //ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-//          
-//          oout.writeObject(hand1);
-//          oout.flush();
-//          System.out.println("Sent");
-//       }catch(Exception e){
-//          e.printStackTrace();
-//       }   
-//          
-//       
-//    }
+
+
  
  
 }

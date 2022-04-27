@@ -67,7 +67,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    
    
    //ArrayList<Card> handReceived = new ArrayList<Card>(); 
-   ArrayList<Card> deckReceived = new ArrayList<Card>();
+   ArrayList<Card> handReceived = new ArrayList<Card>();
    
    ArrayList<Card> PlayerHand = new ArrayList<Card>();
    
@@ -201,24 +201,20 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
 //       drawCard();
 //       drawCard();
       
-      receiveDeck();
+      receiveCards();
 
-      PlayerHand.add(deckReceived.get(0));
-      PlayerHand.add(deckReceived.get(1));
-      PlayerHand.add(deckReceived.get(2));
-      PlayerHand.add(deckReceived.get(3));
-      PlayerHand.add(deckReceived.get(4));
-      PlayerHand.add(deckReceived.get(5));
-      PlayerHand.add(deckReceived.get(6));
+      PlayerHand.add(handReceived.get(0));
+      PlayerHand.add(handReceived.get(1));
+      PlayerHand.add(handReceived.get(2));
+      PlayerHand.add(handReceived.get(3));
+      PlayerHand.add(handReceived.get(4));
+      PlayerHand.add(handReceived.get(5));
+      PlayerHand.add(handReceived.get(6));
+      
+      System.out.println("Hand Size: " + handReceived.size());
+
       
       
-      deckReceived.remove(0);
-      deckReceived.remove(1);
-      deckReceived.remove(2);
-      deckReceived.remove(3);
-      deckReceived.remove(4);
-      deckReceived.remove(5);
-      deckReceived.remove(6);
       
       showHand();
       
@@ -229,7 +225,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
          }
       
       
-      System.out.println("DECK SIZE: " + deckReceived.size());
+      System.out.println("DECK SIZE: " + handReceived.size());
       
    
    }
@@ -237,15 +233,15 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    public void drawCard(){
       System.out.println("Starting DRAW");
    
-      receiveDeck();
+      receiveCards();
       
       
       if(PlayerHand.size() == 6){
          btnDraw.setDisable(true);
       }
       
-      PlayerHand.add(deckReceived.get(0));
-      deckReceived.get(0);
+      PlayerHand.add(handReceived.get(0));
+      handReceived.get(0);
       
       
       System.out.println("Received Deck");
@@ -259,10 +255,10 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       
    
       System.out.println("Removing card from deck");
-      deckReceived.remove(0);
+      handReceived.remove(0);
       
       System.out.println("Player 1 hand: " + PlayerHand.size());
-      System.out.println("DECK SIZE: " + deckReceived.size());
+      System.out.println("DECK SIZE: " + handReceived.size());
       
       
    
@@ -273,7 +269,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    
    
    
-   public void receiveDeck(){
+   public void receiveCards(){
       try{
       
          osClient = socket.getOutputStream();
@@ -282,14 +278,14 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
          isClient = socket.getInputStream();
          objIsClient = new ObjectInputStream(isClient);
          
-         deckReceived = (ArrayList<Card>)objIsClient.readObject();
+         handReceived = (ArrayList<Card>)objIsClient.readObject();
          
          objOsClient.flush();    
          
-         for (int i = 0; i < deckReceived.size(); i++){
-            System.out.println(deckReceived.get(i).toString() +  " , ");
+         for (int i = 0; i < handReceived.size(); i++){
+            System.out.println(handReceived.get(i).toString() +  " , ");
          }
-         System.out.println(deckReceived.size());
+         System.out.println(handReceived.size());
          System.out.println("-------Received Deck-------");
          
          socket.close();
@@ -304,7 +300,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
     public void sendDeckBack(){
        try{
          
-         objOsClient.writeObject(deckReceived);
+         objOsClient.writeObject(handReceived);
          objOsClient.flush();
          
        

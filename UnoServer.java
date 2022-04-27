@@ -8,6 +8,14 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.geometry.*;
 import java.util.Random;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.text.Text;
 
 import java.net.*;
 import java.io.*;
@@ -25,26 +33,17 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    private Button btnShuffle = new Button("Shuffle");
    private Button btnSend = new Button("Send Hands");
    private Button btnCreateDeck = new Button("Create Deck");
-<<<<<<< Updated upstream
-=======
    private Button btnReceiveNewDeck = new Button("Receive New Deck");
    private Label lblShowCard = new Label("");
->>>>>>> Stashed changes
    
    public ServerSocket ss = null;
    private ServerThread serverThread = null;
    public static final int SERVER_PORT = 54321;
    
    Socket socket;
-<<<<<<< Updated upstream
-   ObjectInput ooin = null;
-   ObjectOutputStream oout = null;
-   private Random randomGenerator;
-=======
    
    private Random randomGenerator;
    
->>>>>>> Stashed changes
    
    //card variables
    String color;
@@ -73,6 +72,8 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    ArrayList<Card> hand1 = new ArrayList<Card>();
    ArrayList<Card> hand2 = new ArrayList<Card>();
    
+   ArrayList<Card> newDeck = new ArrayList<Card>();
+   
    public static void main(String[] args) {
       launch(args);
    }
@@ -97,7 +98,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       fpBot.setAlignment(Pos.CENTER);
       taLog.setPrefRowCount(10);
       taLog.setPrefColumnCount(35);
-      fpBot.getChildren().addAll(taLog);
+      fpBot.getChildren().addAll(lblShowCard);
       root.getChildren().add(fpBot);
       
       btnStart.setOnAction(this);
@@ -107,9 +108,12 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       btnReceiveNewDeck.setOnAction(this);
       
       
+      
+      
       // Show window
       scene = new Scene(root, 500, 200);
       stage.setScene(scene);
+      
       stage.show();
       
    }
@@ -138,14 +142,11 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             break;
          case "Send Hands":
             sendDeck();
+            deleteDeck();
             //sendHand();
             break;
          case "Create Deck":
          
-<<<<<<< Updated upstream
-            deleteDeck();
-=======
->>>>>>> Stashed changes
             createDeck();
             break;
          case "Receive New Deck":
@@ -199,34 +200,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       
       public void run(){
          
-<<<<<<< Updated upstream
-            while(true){
-               String data = br.readLine();
-               System.out.println("Client Sent Data: " + data);
-               
-               if(data.equals("quit")){
-                  pw.println("Server Response: Disconnect request received.");
-                  taLog.appendText(data + " \n");
-                  pw.flush(); // you have to flush the data.
-                  break;
-               }else{
-                  taLog.appendText(data + " \n");
-                  pw.println(data); //This is the data in the file.
-                  pw.flush(); // you have to flush the data.
-               }
-            }
-            
-            
-            socket.close();
-         }catch(Exception e){
-            e.printStackTrace();
-         }   
-           
-            
-            
-=======
          
->>>>>>> Stashed changes
       
       }
       
@@ -275,16 +249,16 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             for(int z = 0; z < 2; z++){
             
                if(x == 0){
-                  color = "red";
+                  color = "RED";
                }
                else if(x == 1){
-                  color = "yellow";
+                  color = "YELLOW";
                }
                else if(x == 2){
-                  color = "blue";
+                  color = "BLUE";
                }
                else if(x == 3){
-                  color = "green";
+                  color = "GREEN";
                }
                
             
@@ -309,6 +283,8 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       for(int x2 = 0; x2 < fullDeck.size(); x2++){
          System.out.println(fullDeck.get(x2).toString());
       }
+      stylizeCard();
+      
       
      
    }
@@ -331,13 +307,6 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
         }
      }
    
-<<<<<<< Updated upstream
-   //takes card out of fulldeck
-   public void pullCard(){
-   
-         
-   }
-=======
    public void receiveNewDeck(){
        try{
        
@@ -351,7 +320,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
          
          alteredDeck = (ArrayList<Card>)objIsServer.readObject();
          objOsServer.flush();
-       
+         
          
          for (int i = 0; i < alteredDeck.size(); i++){
             System.out.println(alteredDeck.get(i).toString() +  " , ");
@@ -398,7 +367,6 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
     
     
     }
->>>>>>> Stashed changes
    
    // //Creats player hands
 //    public void createHands(){

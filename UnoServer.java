@@ -191,31 +191,31 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
                      break;
                   case "PLACE":
                      Card c = (Card)ooi.readObject();
-                  
-                     if(c.getColor().equals(placementPile.get(placementPile.size()-1).getColor())){
+                     String sentColor = c.getColor();
+                     String placementColor = placementPile.get(placementPile.size()-1).getColor();
+                     int cNum = c.getNumber();
+                     int pNum = placementPile.get(placementPile.size()-1).getNumber();
+                     
+                     System.out.println(c.toString());
+                     if(true){
+                        
+                        System.out.println("Placing card to pile" );
                            
                            placementPile.add(c);
-                           
-                           
-                           
-                           System.out.println("placement pile size after place:"  + placementPile.size());
-                           lblPileCard.setText("");
-                           lblPileCard.setBackground(new Background(new BackgroundFill(null, null, null)));
-                           
-                           lblPileCard.setText("" + placementPile.get(placementPile.size()-1).getNumber());
-                           if(placementPile.get(placementPile.size()-1).getColor() == "RED"){
+                           lblPileCard.setText("" + c.getNumber());
+                           if(c.getColor().equals("RED")){
                               lblPileCard.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
                               lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-                           }else if(placementPile.get(placementPile.size()-1).getColor() == "GREEN"){
+                           }else if(c.getColor().equals("GREEN")){
                               lblPileCard.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
                               lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-                           }else if(placementPile.get(placementPile.size()-1).getColor() == "BLUE"){
+                           }else if(c.getColor().equals("BLUE")){
                               lblPileCard.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
                               lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-                           }else if(placementPile.get(placementPile.size()-1).getColor() == "YELLOW"){
+                           }else if(c.getColor().equals("YELLOW")){
                               lblPileCard.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
                               lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
-                           }else if(placementPile.get(placementPile.size()-1).getColor() == "WILD" || placementPile.get(placementPile.size()-1).getColor() == "WILD+4"){
+                           }else if(c.getColor().equals("WILD") || c.getColor().equals("WILD+4")){
                               lblPileCard.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
                               lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
                            }
@@ -227,65 +227,28 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
                            
                            
                            
+                           //System.out.println("placement pile size after place:"  + placementPile.size());
+                           
+                           //updatedStylizeCard();
+                           
                         
                         
                         }else{
-                        
-                           Platform.runLater(new Runnable(){
-                              public void run(){
-                              
-                                 Alert a = new Alert(AlertType.ERROR);
-                                 
-                                 a.setContentText("Illegal move: either color or number does not match.");
-                                 a.showAndWait();
-                              }
-                           });
+                           System.out.println("not adding" );
                            
+                           //placementPile.add(c);
+                           
+                           
+                           
+                           //System.out.println("placement pile size after place:"  + placementPile.size());
+                           
+                           //updatedStylizeCard();
                         
                         }
+                        
                      
                      
                      System.out.println(c.toString());
-                     
-                     
-                  
-                  
-                  // We think that its not connecting to the socket or not receiving from the client.
-                     // System.out.println("Accepting place connection");
-//                      socket1 = sSocket.accept();
-//                      oos = new ObjectOutputStream(socket1.getOutputStream());
-//                      ooi = new ObjectInputStream(socket1.getInputStream());
-//                      System.out.println("Accepting place connection");
-//                      
-//                      ArrayList<Card> pCard = (ArrayList<Card>)ooi.readObject();
-//                      
-//                      System.out.println(pCard.size());
-//                      placementPile.add(pCard.get(0));
-                     
-                     
-                     
-                     //Game logic goes here...
-                     /*
-                        
-                        Note: WILD matches any color and WILD+4 invokes drawCard() x 4 and +2 invokes drawCard() x 2
-                     
-                     
-                        if card c.getcolor() == placementpile.get(placementpile.size().getColor())
-                        if card c.getNumber() == placementpile.get(placementpile.size().getnumber())
-                        
-                        then 
-                        
-                        add card c to placement pile and remove it from player hand
-                        
-                        if not then
-                        
-                        pop up alter saying illegal move 
-                        
-                   
-                        
-                     */
-                     placementPile.add(c);
-                     System.out.println(placementPile.size());
                      
                      break;
                   default:
@@ -442,23 +405,6 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    }
    
    
-   public void placeOnPlacement(){
-      
-      //GAME LOGIC
-      System.out.println("HELLO");
-      System.out.println("" + hand.get(0).getColor());
-      System.out.println("" + placementPile.get(0).getColor());
-      System.out.println("" + placementPile.size());
-      
-      
-      
-      
-            
-   
-   }
-   
-   
-   
     
     public void stylizeCard(){
     
@@ -490,50 +436,31 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
     
     public void updatedStylizeCard(){
     
-      lblPileCard.setText("" + placementPile.get(1).getNumber());
-      if(placementPile.get(1).getColor() == "RED"){
-         lblPileCard.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
-         lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-      }else if(placementPile.get(1).getColor() == "GREEN"){
-         lblPileCard.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
-         lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-      }else if(placementPile.get(1).getColor() == "BLUE"){
-         lblPileCard.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
-         lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-      }else if(placementPile.get(1).getColor() == "YELLOW"){
-         lblPileCard.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
-         lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
-      }else if(placementPile.get(1).getColor() == "WILD" || fullDeck.get(0).getColor() == "WILD+4"){
-         lblPileCard.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
-         lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-      }
-      
-      lblPileCard.setPrefHeight(100);
-      lblPileCard.setPrefWidth(50);
-      lblPileCard.setAlignment(Pos.CENTER);
+      lblPileCard.setText("");
+                           lblPileCard.setBackground(new Background(new BackgroundFill(null, null, null)));
+                           
+                           lblNewPileCard.setText("" + placementPile.get(placementPile.size()-1).getNumber());
+                           if(placementPile.get(placementPile.size()-1).getColor() == "RED"){
+                              lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+                              lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+                           }else if(placementPile.get(placementPile.size()-1).getColor() == "GREEN"){
+                              lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+                              lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+                           }else if(placementPile.get(placementPile.size()-1).getColor() == "BLUE"){
+                              lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+                              lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+                           }else if(placementPile.get(placementPile.size()-1).getColor() == "YELLOW"){
+                              lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
+                              lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
+                           }else if(placementPile.get(placementPile.size()-1).getColor() == "WILD" || placementPile.get(placementPile.size()-1).getColor() == "WILD+4"){
+                              lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+                              lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+                           }
+                           
+                           lblNewPileCard.setPrefHeight(100);
+                           lblNewPileCard.setPrefWidth(50);
+                           lblNewPileCard.setAlignment(Pos.CENTER);
     
-   
-      // lblNewPileCard.setText("" + placementPile.get(1).getNumber());
-//       if(placementPile.get(1).getColor() == "RED"){
-//          lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
-//          lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-//       }else if(placementPile.get(1).getColor() == "GREEN"){
-//          lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
-//          lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-//       }else if(placementPile.get(1).getColor() == "BLUE"){
-//          lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
-//          lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-//       }else if(placementPile.get(1).getColor() == "YELLOW"){
-//          lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
-//          lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
-//       }else if(placementPile.get(1).getColor() == "WILD" || fullDeck.get(0).getColor() == "WILD+4"){
-//          lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
-//          lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-//       }
-//       
-//       lblNewPileCard.setPrefHeight(100);
-//       lblNewPileCard.setPrefWidth(50);
-//       lblNewPileCard.setAlignment(Pos.CENTER);
    
    }
    

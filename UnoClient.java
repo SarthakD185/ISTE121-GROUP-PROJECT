@@ -215,7 +215,8 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
            
            System.out.println(PlayerHand.get(0));
            
-          oos.writeObject(PlayerHand.get(0));
+           
+           oos.writeObject(PlayerHand.get(Integer.parseInt(dialogInput)));
            oos.flush();
            oos.reset();
        
@@ -223,21 +224,6 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
          
        
        
-          // socket = new Socket(tfServerIP.getText(), 12345);
-//           oos = new ObjectOutputStream(socket.getOutputStream());
-//           ooi = new ObjectInputStream(socket.getInputStream());
-//           oos.writeUTF("PLACE");
-//           oos.flush();
-//           PlayerHand.remove(0);
-//           // lblCard1.setText("");
-// //           lblCard1.setBackground(new Background(new BackgroundFill(null, null, null)));
-//           
-// //           
-// //           System.out.println(PlayerHand.get(0));
-// //           
-// //           oos.writeObject(PlayerHand.get(0));
-// //           oos.flush();
-// //           oos.reset();
        }catch(Exception e){
          e.printStackTrace();
        }

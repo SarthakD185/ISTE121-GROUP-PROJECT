@@ -122,14 +122,25 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       String label = ((Button)ae.getSource()).getText();
       switch(label) {
          case "Start":
+<<<<<<< Updated upstream
             
             serverThread = new ServerThread();
             serverThread.start();
+=======
+            Thread t1 = 
+               new Thread() {
+                  public void run() {
+                     doServerStuff();
+                  }
+               };
+            t1.start();
+>>>>>>> Stashed changes
             btnStart.setText("End");
             break;
          case "End":
             disconnect();
             btnStart.setText("Start");
+<<<<<<< Updated upstream
             break;
          case "Shuffle":
             
@@ -146,6 +157,18 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
             //sendHand();
             break;
          case "Create Deck":
+=======
+            break;        
+      }
+   }
+   
+   //Server thread
+   private void doServerStuff() {
+      try {
+         System.out.println("Starting server");
+         ServerSocket sSocket = new ServerSocket(12345);
+         while(true) {
+>>>>>>> Stashed changes
          
             createDeck();
             break;
@@ -161,6 +184,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    class ServerThread extends Thread{
       private ServerSocket sSocket = null;
       public void run() {
+<<<<<<< Updated upstream
       
          try
          {
@@ -171,18 +195,135 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
                Socket s = ss.accept();
                System.out.println("Request received from " + s.getInetAddress().getHostName());
                new ProcessThread(s).start();
+=======
+         try {
+            ooi = new ObjectInputStream(socket2.getInputStream());
+            oos = new ObjectOutputStream(socket2.getOutputStream());
+            clients.add(oos);
+            
+            while(true)
+            {
+               String command = ooi.readUTF();
+               System.out.println("command:" + command);
+            
+               switch(command) {
+                  case "CONNECT": //CREATES DECK AND SENDS HANDS
+                     ArrayList<Card> hand = pullCards();
+                     oos.writeObject(hand);
+                     oos.flush();
+                     oos.reset();
+                     
+                     placementPile();
+                     break;
+                     
+                  case "DRAW": //SENDS CARDS TO PLAYER HAND ON THE CLIENT
+                     
+                     ArrayList<Card> sCard = sendCard();
+                     oos.writeObject(sCard);
+                     oos.flush();
+                     oos.reset();
+                     
+                     System.out.println(sCard.size());
+                     
+                     
+                     String data = ooi.readUTF();
+                     broadcastMessage("INFO","From server " + data);
+                           
+                     break;
+                  case "PLACE": //TAKES CARDS FROM CLIENT AND PLACES THEM ON PLACEMENT PILE
+                     Card c = (Card)ooi.readObject();
+                     String sentColor = c.getColor();
+                     String placementColor = placementPile.get(placementPile.size()-1).getColor();
+                     int cNum = c.getNumber();
+                     int pNum = placementPile.get(placementPile.size()-1).getNumber();
+                     
+                     System.out.println(c.toString());
+                     if(true){ //GAME LOGIC GOES HERE.
+                        
+                        System.out.println("Placing card to pile" );
+                           
+                        placementPile.add(c);
+                        lblPileCard.setText("" + c.getNumber());
+                        if(c.getColor().equals("RED")){
+                           lblPileCard.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+                           lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+                        }else if(c.getColor().equals("GREEN")){
+                           lblPileCard.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+                           lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+                        }else if(c.getColor().equals("BLUE")){
+                           lblPileCard.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+                           lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+                        }else if(c.getColor().equals("YELLOW")){
+                           lblPileCard.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
+                           lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
+                        }else if(c.getColor().equals("WILD") || c.getColor().equals("WILD+4")){
+                           lblPileCard.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+                           lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+                        }
+                           
+                        lblPileCard.setPrefHeight(100);
+                        lblPileCard.setPrefWidth(50);
+                        lblPileCard.setAlignment(Pos.CENTER);
+                           
+                     }else{
+                        System.out.println("not adding" );
+                           
+                        Platform.runLater(
+                            new Runnable() {
+                               public void run() {
+                                  Alert a = new Alert(AlertType.NONE);
+                                  a.setAlertType(AlertType.ERROR);
+                                  a.setContentText("Illegal Move : Either color or number does not match.");
+                                  a.show();
+                                  
+                               }
+                            });
+                        
+                     }
+                      
+                     System.out.println(c.toString());
+                     
+                     break;
+                  default:
+                     System.out.println("Invalid command");
+>>>>>>> Stashed changes
                
                
             
             }
          }
+<<<<<<< Updated upstream
          catch(Exception ex)
+=======
+      
+      }
+   }
+   
+   //sends messages to all clients
+   private void broadcastMessage(String command, Object data) {
+      System.out.println("sending broadcast message : " + clients.size());  
+      for(ObjectOutputStream clientOutStream : clients) {
+         System.out.println("sending broadcast message ==");
+         try {
+            clientOutStream.writeUTF(command);
+            clientOutStream.flush();
+            System.out.println("Sending data " + data);
+            clientOutStream.writeObject(data);
+            clientOutStream.reset();
+            clientOutStream.flush();
+         } catch(Exception ex)
+>>>>>>> Stashed changes
          {
             ex.printStackTrace();
          }
       
       }
    }
+<<<<<<< Updated upstream
+=======
+   
+   //disconnects from client  
+>>>>>>> Stashed changes
    public void disconnect(){
       try{
          ss.close();
@@ -191,6 +332,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       }
    }
    
+<<<<<<< Updated upstream
    class ProcessThread extends Thread {
    
       public ProcessThread(Socket s)
@@ -206,6 +348,9 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       
    } 
    
+=======
+   //creates ordered deck
+>>>>>>> Stashed changes
    public void createDeck(){
       //create the zero cards
       Card c1 = new Card("RED", 0);
@@ -283,6 +428,20 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       for(int x2 = 0; x2 < fullDeck.size(); x2++){
          System.out.println(fullDeck.get(x2).toString());
       }
+<<<<<<< Updated upstream
+=======
+      
+   }
+   
+   //places the first card on placement pile
+   public void placementPile(){
+   
+      placementPile.add(fullDeck.get(0));
+      System.out.println(placementPile.get(0));
+      fullDeck.remove(0);
+      System.out.println(fullDeck.get(0));
+      
+>>>>>>> Stashed changes
       stylizeCard();
       
       
@@ -307,6 +466,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
         }
      }
    
+<<<<<<< Updated upstream
    public void receiveNewDeck(){
        try{
        
@@ -317,6 +477,13 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
          
          isServer = socket.getInputStream();
          objIsServer = new ObjectInputStream(isServer);
+=======
+   //works with draw to send singular cards
+   public ArrayList<Card> sendCard(){
+      ArrayList<Card> sCard = new ArrayList<Card>();
+      sCard.add(fullDeck.get(0));
+      fullDeck.remove(0);
+>>>>>>> Stashed changes
          
          alteredDeck = (ArrayList<Card>)objIsServer.readObject();
          objOsServer.flush();
@@ -340,8 +507,15 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       
       fullDeck.clear();
    }
+<<<<<<< Updated upstream
     
     public void stylizeCard(){
+=======
+   
+   
+   //creates card GUI 
+   public void stylizeCard(){
+>>>>>>> Stashed changes
     
       lblShowCard.setText("" + fullDeck.get(0).getNumber());
       if(fullDeck.get(0).getColor() == "RED"){
@@ -366,6 +540,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       lblShowCard.setAlignment(Pos.CENTER);
     
     
+<<<<<<< Updated upstream
     }
    
    // //Creats player hands
@@ -411,5 +586,39 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
 //       
 //    }
  
+=======
+   }
+    
+   //creates altered card GUI 
+   public void updatedStylizeCard(){
+    
+      lblPileCard.setText("");
+      lblPileCard.setBackground(new Background(new BackgroundFill(null, null, null)));
+                           
+      lblNewPileCard.setText("" + placementPile.get(placementPile.size()-1).getNumber());
+      if(placementPile.get(placementPile.size()-1).getColor() == "RED"){
+         lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+         lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(placementPile.get(placementPile.size()-1).getColor() == "GREEN"){
+         lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+         lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(placementPile.get(placementPile.size()-1).getColor() == "BLUE"){
+         lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+         lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(placementPile.get(placementPile.size()-1).getColor() == "YELLOW"){
+         lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
+         lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
+      }else if(placementPile.get(placementPile.size()-1).getColor() == "WILD" || placementPile.get(placementPile.size()-1).getColor() == "WILD+4"){
+         lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+         lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }
+                           
+      lblNewPileCard.setPrefHeight(100);
+      lblNewPileCard.setPrefWidth(50);
+      lblNewPileCard.setAlignment(Pos.CENTER);
+    
+   
+   }
+>>>>>>> Stashed changes
  
 }

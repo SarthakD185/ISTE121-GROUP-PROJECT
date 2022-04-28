@@ -157,6 +157,8 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       }
    }
    
+   
+   //Connects to the server and creates hands for players
    public void doStart(){
    
       try{
@@ -174,6 +176,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       
    }
    
+   //disconnects from the server
    public void doStop(){
       try {
          socket.close();
@@ -191,7 +194,38 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       btnConnect.setText("Connect");
    }
    
+<<<<<<< Updated upstream
    public void createHand(){
+=======
+   //draws singluar cards from the server
+   public void drawCard(){
+      try {
+         socket = new Socket(tfServerIP.getText(), 12345);
+         oos = new ObjectOutputStream(socket.getOutputStream());
+         ooi = new ObjectInputStream(socket.getInputStream());
+         oos.writeUTF("DRAW");
+         oos.flush();
+         System.out.println("Before: " + PlayerHand.size());
+         received = (ArrayList<Card>)ooi.readObject();        
+         PlayerHand.add(received.get(0));
+         System.out.println("After: " + PlayerHand.size());
+                 
+         //Local thread for incoming data
+         //new ReceiveMsgThread().start();
+      
+         //oos.writeUTF("Send to all client");
+         oos.flush();
+         
+         updatedShowHand();
+      } catch(Exception e) {
+         e.printStackTrace();
+      }
+   
+   }
+   
+   //places cards on placement pile which is on the server
+   public void place(){
+>>>>>>> Stashed changes
    
       // drawCard();
 //       drawCard();
@@ -201,6 +235,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
 //       drawCard();
 //       drawCard();
       
+<<<<<<< Updated upstream
       receiveDeck();
 
       PlayerHand.add(deckReceived.get(0));
@@ -223,6 +258,42 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       showHand();
       
       System.out.println("Player 1 hand: " + PlayerHand.size());
+=======
+       dialogPlace = new TextInputDialog();
+       dialogPlace.setTitle("Place Card");
+       dialogPlace.setHeaderText("Choose a card to place (0 is left most card and 6 is right most card)");
+       dialogPlace.setContentText("Enter the number:");
+       dialogPlace.showAndWait();
+            
+       dialogInput = dialogPlace.getEditor().getText();
+       System.out.println(dialogInput);
+       
+       try{
+       
+         oos.writeUTF("PLACE");
+           oos.flush();
+           
+           System.out.println(PlayerHand.get(0));
+           
+           
+           oos.writeObject(PlayerHand.get(Integer.parseInt(dialogInput)));
+           
+           PlayerHand.remove(Integer.parseInt(dialogInput));
+           //showHand();
+           
+           oos.flush();
+           oos.reset();
+       
+       }catch(Exception e){
+         e.printStackTrace();
+       }
+       
+   }
+   
+   //displays hand GUI
+   public void showHand(){
+      checkColor();
+>>>>>>> Stashed changes
       
       for (int i = 0; i < PlayerHand.size(); i++){
             System.out.println(PlayerHand.get(i).toString() +  " , ");
@@ -234,10 +305,16 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    
    }
    
+<<<<<<< Updated upstream
    public void drawCard(){
       System.out.println("Starting DRAW");
    
       receiveDeck();
+=======
+   //displays altered hand
+   public void updatedShowHand(){
+      checkColor();
+>>>>>>> Stashed changes
       
       
       if(PlayerHand.size() == 6){
@@ -250,11 +327,21 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       
       System.out.println("Received Deck");
       
+<<<<<<< Updated upstream
       System.out.println("Player 1 hand: " + PlayerHand.size());
+=======
+      
+    
+>>>>>>> Stashed changes
       
       
       
+<<<<<<< Updated upstream
       
+=======
+   //Check colors and numbers   
+   public void checkColor(){
+>>>>>>> Stashed changes
       
       
    

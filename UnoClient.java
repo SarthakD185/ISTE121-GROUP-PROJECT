@@ -141,15 +141,12 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
          new ReceiveMsgThread().start();
          
          showHand();
-          
-       
+         
       }catch(Exception e){
          e.printStackTrace();
       }
       
-       
       btnConnect.setText("Disconnect");
-      
       
    }
    
@@ -208,18 +205,39 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
        dialogInput = dialogPlace.getEditor().getText();
        System.out.println(dialogInput);
        
+       
+       
        try{
-          socket = new Socket(tfServerIP.getText(), 12345);
-          oos = new ObjectOutputStream(socket.getOutputStream());
-          ooi = new ObjectInputStream(socket.getInputStream());
-          oos.writeUTF("PLACE");
-          oos.flush();
-          
-          System.out.println(PlayerHand.get(0));
-          
+       
+       
+         oos.writeUTF("PLACE");
+           oos.flush();
+           
+           System.out.println(PlayerHand.get(0));
+           
           oos.writeObject(PlayerHand.get(0));
-          oos.flush();
-          oos.reset();
+           oos.flush();
+           oos.reset();
+       
+       
+         
+       
+       
+          // socket = new Socket(tfServerIP.getText(), 12345);
+//           oos = new ObjectOutputStream(socket.getOutputStream());
+//           ooi = new ObjectInputStream(socket.getInputStream());
+//           oos.writeUTF("PLACE");
+//           oos.flush();
+//           PlayerHand.remove(0);
+//           // lblCard1.setText("");
+// //           lblCard1.setBackground(new Background(new BackgroundFill(null, null, null)));
+//           
+// //           
+// //           System.out.println(PlayerHand.get(0));
+// //           
+// //           oos.writeObject(PlayerHand.get(0));
+// //           oos.flush();
+// //           oos.reset();
        }catch(Exception e){
          e.printStackTrace();
        }

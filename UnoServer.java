@@ -16,6 +16,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.text.Text;
+import javafx.scene.control.Alert.AlertType;
 
 import java.net.*;
 import java.io.*;
@@ -31,13 +32,15 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    private Button btnStart = new Button("Start");
    private Label lblShowCard = new Label("");
    private Label lblPileCard = new Label("");
+   private Label lblNewPileCard = new Label("");
    
    public ServerSocket ss = null;
    
    public static final int SERVER_PORT = 54321;
    
-   Socket socket;
+   Socket socket = null;
    Socket socket2 = null;
+   Socket socket1 = null;
    
    private Random randomGenerator;
    
@@ -58,7 +61,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    
    //placement pile
    ArrayList<Card> placementPile = new ArrayList<Card>();
-   
+   ArrayList<Card> hand = new ArrayList<Card>();
    
    public static void main(String[] args) {
       launch(args);
@@ -83,7 +86,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       FlowPane fpBot = new FlowPane(8,8);
       fpBot.setAlignment(Pos.CENTER);
       
-      fpBot.getChildren().addAll(lblPileCard);
+      fpBot.getChildren().addAll(lblPileCard, lblNewPileCard);
       root.getChildren().add(fpBot);
       
       btnStart.setOnAction(this);
@@ -126,7 +129,9 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
          System.out.println("Starting server");
          ServerSocket sSocket = new ServerSocket(12345);
          while(true) {
-            Socket socket1 = sSocket.accept();
+         
+            //client socket accepting server socket
+            socket1 = sSocket.accept();
             Thread t2 = new ClientThread(socket1);
             System.out.println("client connected");
             t2.start();
@@ -170,7 +175,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
                      break;
                      
                   case "DRAW":
-                     //Implemented
+                     
                      
                      ArrayList<Card> sCard = sendCard();
                      oos.writeObject(sCard);
@@ -180,18 +185,85 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
                      System.out.println(sCard.size());
                      
                      
-                     // String data = ooi.readUTF();
-//                      broadcastMessage("INFO","From server " + data);
+                     String data = ooi.readUTF();
+                     broadcastMessage("INFO","From server " + data);
                            
                      break;
                   case "PLACE":
+                     Card c = (Card)ooi.readObject();
+                  
+                     if(c.getColor().equals(placementPile.get(placementPile.size()-1).getColor())){
+                           
+                           placementPile.add(c);
+                           
+                           
+                           
+                           System.out.println("placement pile size after place:"  + placementPile.size());
+                           lblPileCard.setText("");
+                           lblPileCard.setBackground(new Background(new BackgroundFill(null, null, null)));
+                           
+                           lblPileCard.setText("" + placementPile.get(placementPile.size()-1).getNumber());
+                           if(placementPile.get(placementPile.size()-1).getColor() == "RED"){
+                              lblPileCard.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+                              lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+                           }else if(placementPile.get(placementPile.size()-1).getColor() == "GREEN"){
+                              lblPileCard.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+                              lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+                           }else if(placementPile.get(placementPile.size()-1).getColor() == "BLUE"){
+                              lblPileCard.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+                              lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+                           }else if(placementPile.get(placementPile.size()-1).getColor() == "YELLOW"){
+                              lblPileCard.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
+                              lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
+                           }else if(placementPile.get(placementPile.size()-1).getColor() == "WILD" || placementPile.get(placementPile.size()-1).getColor() == "WILD+4"){
+                              lblPileCard.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+                              lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+                           }
+                           
+                           lblPileCard.setPrefHeight(100);
+                           lblPileCard.setPrefWidth(50);
+                           lblPileCard.setAlignment(Pos.CENTER);
+                           
+                           
+                           
+                           
+                        
+                        
+                        }else{
+                        
+                           Platform.runLater(new Runnable(){
+                              public void run(){
+                              
+                                 Alert a = new Alert(AlertType.ERROR);
+                                 
+                                 a.setContentText("Illegal move: either color or number does not match.");
+                                 a.showAndWait();
+                              }
+                           });
+                           
+                        
+                        }
+                     
+                     
+                     System.out.println(c.toString());
+                     
+                     
+                  
                   
                   // We think that its not connecting to the socket or not receiving from the client.
-                     sSocket = new ServerSocket(54123);
-                     socket2 = sSocket.accept();
-                     oos = new ObjectOutputStream(socket.getOutputStream());
-                     ooi = new ObjectInputStream(socket.getInputStream());
-                     Card c = (Card)ooi.readObject();;
+                     // System.out.println("Accepting place connection");
+//                      socket1 = sSocket.accept();
+//                      oos = new ObjectOutputStream(socket1.getOutputStream());
+//                      ooi = new ObjectInputStream(socket1.getInputStream());
+//                      System.out.println("Accepting place connection");
+//                      
+//                      ArrayList<Card> pCard = (ArrayList<Card>)ooi.readObject();
+//                      
+//                      System.out.println(pCard.size());
+//                      placementPile.add(pCard.get(0));
+                     
+                     
+                     
                      //Game logic goes here...
                      /*
                         
@@ -351,7 +423,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    
    //TAKES 7 CARDS AND SENDS THEM TO THE CLIENT.
    public ArrayList<Card> pullCards(){
-      ArrayList<Card> hand = new ArrayList<Card>();
+      hand = new ArrayList<Card>();
       for(int i = 0; i <= 6; i++){
          hand.add(fullDeck.get(0));
          fullDeck.remove(0);
@@ -368,6 +440,24 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
          
       return sCard;
    }
+   
+   
+   public void placeOnPlacement(){
+      
+      //GAME LOGIC
+      System.out.println("HELLO");
+      System.out.println("" + hand.get(0).getColor());
+      System.out.println("" + placementPile.get(0).getColor());
+      System.out.println("" + placementPile.size());
+      
+      
+      
+      
+            
+   
+   }
+   
+   
    
     
     public void stylizeCard(){
@@ -396,6 +486,56 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
     
     
     }
+    
+    
+    public void updatedStylizeCard(){
+    
+      lblPileCard.setText("" + placementPile.get(1).getNumber());
+      if(placementPile.get(1).getColor() == "RED"){
+         lblPileCard.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+         lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(placementPile.get(1).getColor() == "GREEN"){
+         lblPileCard.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+         lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(placementPile.get(1).getColor() == "BLUE"){
+         lblPileCard.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+         lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(placementPile.get(1).getColor() == "YELLOW"){
+         lblPileCard.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
+         lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
+      }else if(placementPile.get(1).getColor() == "WILD" || fullDeck.get(0).getColor() == "WILD+4"){
+         lblPileCard.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+         lblPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }
+      
+      lblPileCard.setPrefHeight(100);
+      lblPileCard.setPrefWidth(50);
+      lblPileCard.setAlignment(Pos.CENTER);
+    
+   
+      // lblNewPileCard.setText("" + placementPile.get(1).getNumber());
+//       if(placementPile.get(1).getColor() == "RED"){
+//          lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+//          lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+//       }else if(placementPile.get(1).getColor() == "GREEN"){
+//          lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+//          lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+//       }else if(placementPile.get(1).getColor() == "BLUE"){
+//          lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+//          lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+//       }else if(placementPile.get(1).getColor() == "YELLOW"){
+//          lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
+//          lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
+//       }else if(placementPile.get(1).getColor() == "WILD" || fullDeck.get(0).getColor() == "WILD+4"){
+//          lblNewPileCard.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+//          lblNewPileCard.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+//       }
+//       
+//       lblNewPileCard.setPrefHeight(100);
+//       lblNewPileCard.setPrefWidth(50);
+//       lblNewPileCard.setAlignment(Pos.CENTER);
+   
+   }
    
 
 

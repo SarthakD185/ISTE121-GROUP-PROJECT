@@ -179,26 +179,27 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    
    public void drawCard(){
       try {
+         socket = new Socket(tfServerIP.getText(), 12345);
+         oos = new ObjectOutputStream(socket.getOutputStream());
+         ooi = new ObjectInputStream(socket.getInputStream());
          oos.writeUTF("DRAW");
          oos.flush();
-         
-         received = (ArrayList<Card>)ooi.readObject(); 
-         
+         System.out.println("Before: " + PlayerHand.size());
+         received = (ArrayList<Card>)ooi.readObject();        
          PlayerHand.add(received.get(0));
-         System.out.println(PlayerHand.size());
+         System.out.println("After: " + PlayerHand.size());
                  
          //Local thread for incoming data
-         new ReceiveMsgThread().start();
+         //new ReceiveMsgThread().start();
       
-         oos.writeUTF("Send to all client");
+         //oos.writeUTF("Send to all client");
          oos.flush();
       } catch(Exception e) {
          e.printStackTrace();
       }
    
    }
-   
-   
+
 
    
    public void showHand(){
@@ -442,6 +443,3 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    }
    
 }
-
-
-

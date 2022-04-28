@@ -43,6 +43,8 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
    private Label lblCard5 = new Label("");
    private Label lblCard6 = new Label("");
    private Label lblCard7 = new Label("");
+   private Label lblCard8 = new Label("");
+   
    
    TextInputDialog dialogPlace = null;
    String dialogInput = null;
@@ -84,7 +86,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       
       FlowPane fpBot = new FlowPane(8,8);
       fpBot.setAlignment(Pos.CENTER);
-      fpBot.getChildren().addAll(lblCard1, lblCard2, lblCard3, lblCard4, lblCard5, lblCard6, lblCard7);
+      fpBot.getChildren().addAll(lblCard1, lblCard2, lblCard3, lblCard4, lblCard5, lblCard6, lblCard7, lblCard8);
       root.getChildren().add(fpBot);
       
      
@@ -146,7 +148,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
          }
          //Local thread for incoming data
          new ReceiveMsgThread().start();
-         
+         revalidate();
          showHand();
           
        
@@ -194,6 +196,8 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       
          //oos.writeUTF("Send to all client");
          oos.flush();
+         
+         updatedHand();
       } catch(Exception e) {
          e.printStackTrace();
       }
@@ -210,6 +214,14 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       }
       
    }
+   
+   public void updatedHand(){
+      checkColor();
+      
+      for (int i = 0; i < PlayerHand.size(); i++){
+         System.out.println(PlayerHand.get(i).toString() +  " , ");
+      }
+   }
       
       
       
@@ -222,6 +234,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       lblCard5.setText("" + PlayerHand.get(4).getNumber());
       lblCard6.setText("" + PlayerHand.get(5).getNumber());
       lblCard7.setText("" + PlayerHand.get(6).getNumber());
+      lblCard8.setText("" + PlayerHand.get(7).getNumber());
          
       
       if(PlayerHand.get(0).getColor().equals("RED")){
@@ -382,6 +395,29 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
          lblCard7.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
          lblCard7.setStyle("-fx-font: 10 arial; -fx-text-fill: white;");
       }
+      
+      if(PlayerHand.get(7).getColor().equals("RED")){
+         lblCard8.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+         lblCard8.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(PlayerHand.get(7).getColor().equals("GREEN")){
+         lblCard8.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+         lblCard8.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(PlayerHand.get(7).getColor().equals("BLUE")){
+         lblCard8.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+         lblCard8.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(PlayerHand.get(7).getColor().equals("YELLOW")){
+         lblCard8.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
+         lblCard8.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
+      }else if((PlayerHand.get(7).getColor().equals("WILD"))){
+         lblCard8.setText("WILD");
+         lblCard8.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+         lblCard8.setStyle("-fx-font: 10 arial; -fx-text-fill: white;");
+      }else if((PlayerHand.get(7).getColor().equals("WILD+4"))){
+         lblCard8.setText("WILD+4");
+         lblCard8.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+         lblCard8.setStyle("-fx-font: 10 arial; -fx-text-fill: white;");
+      }
+
       lblCard1.setPrefHeight(100);
       lblCard1.setPrefWidth(50);
       lblCard1.setAlignment(Pos.CENTER);
@@ -411,6 +447,10 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       lblCard7.setPrefHeight(100);
       lblCard7.setPrefWidth(50);
       lblCard7.setAlignment(Pos.CENTER);
+      
+      lblCard8.setPrefHeight(100);
+      lblCard8.setPrefWidth(50);
+      lblCard8.setAlignment(Pos.CENTER);
    
       
    }

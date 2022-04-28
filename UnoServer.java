@@ -37,6 +37,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
    public static final int SERVER_PORT = 54321;
    
    Socket socket;
+   Socket socket2 = null;
    
    private Random randomGenerator;
    
@@ -164,6 +165,8 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
                      oos.writeObject(hand);
                      oos.flush();
                      oos.reset();
+                     
+                     placementPile();
                      break;
                      
                   case "DRAW":
@@ -179,6 +182,38 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
                      
                      // String data = ooi.readUTF();
 //                      broadcastMessage("INFO","From server " + data);
+                           
+                     break;
+                  case "PLACE":
+                  
+                  // We think that its not connecting to the socket or not receiving from the client.
+                     sSocket = new ServerSocket(54123);
+                     socket2 = sSocket.accept();
+                     oos = new ObjectOutputStream(socket.getOutputStream());
+                     ooi = new ObjectInputStream(socket.getInputStream());
+                     Card c = (Card)ooi.readObject();;
+                     //Game logic goes here...
+                     /*
+                        
+                        Note: WILD matches any color and WILD+4 invokes drawCard() x 4 and +2 invokes drawCard() x 2
+                     
+                     
+                        if card c.getcolor() == placementpile.get(placementpile.size().getColor())
+                        if card c.getNumber() == placementpile.get(placementpile.size().getnumber())
+                        
+                        then 
+                        
+                        add card c to placement pile and remove it from player hand
+                        
+                        if not then
+                        
+                        pop up alter saying illegal move 
+                        
+                   
+                        
+                     */
+                     placementPile.add(c);
+                     System.out.println(placementPile.size());
                      
                      break;
                   default:
@@ -298,7 +333,7 @@ public class UnoServer extends Application implements EventHandler<ActionEvent>{
       for(int x2 = 0; x2 < fullDeck.size(); x2++){
          System.out.println(fullDeck.get(x2).toString());
       }
-      placementPile();
+      
    }
    
    

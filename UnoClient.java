@@ -117,16 +117,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
             
             break;
          case "Place":
-            String text = ((Button)ae.getSource()).getText();
-            if(text.equals("Place")){
-               dialogPlace = new TextInputDialog();
-               dialogPlace.setTitle("Place Card");
-               dialogPlace.setHeaderText("Choose a card to place (0 is left most card and 6 is right most card)");
-               dialogPlace.setContentText("Enter the number:");
-               dialogPlace.showAndWait();
-            }
-            dialogInput = dialogPlace.getEditor().getText();
-            System.out.println(dialogInput);
+            place();
             break;
        
       
@@ -148,7 +139,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
          }
          //Local thread for incoming data
          new ReceiveMsgThread().start();
-         revalidate();
+         
          showHand();
           
        
@@ -197,10 +188,46 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
          //oos.writeUTF("Send to all client");
          oos.flush();
          
-         updatedHand();
+         updatedShowHand();
       } catch(Exception e) {
          e.printStackTrace();
       }
+   
+   }
+   
+   public void place(){
+   
+      //code to make it popup
+      
+       dialogPlace = new TextInputDialog();
+       dialogPlace.setTitle("Place Card");
+       dialogPlace.setHeaderText("Choose a card to place (0 is left most card and 6 is right most card)");
+       dialogPlace.setContentText("Enter the number:");
+       dialogPlace.showAndWait();
+            
+       dialogInput = dialogPlace.getEditor().getText();
+       System.out.println(dialogInput);
+       
+       try{
+          socket = new Socket(tfServerIP.getText(), 12345);
+          oos = new ObjectOutputStream(socket.getOutputStream());
+          ooi = new ObjectInputStream(socket.getInputStream());
+          oos.writeUTF("PLACE");
+          oos.flush();
+          
+          System.out.println(PlayerHand.get(0));
+          
+          oos.writeObject(PlayerHand.get(0));
+          oos.flush();
+          oos.reset();
+       }catch(Exception e){
+         e.printStackTrace();
+       }
+       
+       
+       
+       
+       
    
    }
 
@@ -215,12 +242,44 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       
    }
    
-   public void updatedHand(){
+   public void updatedShowHand(){
       checkColor();
       
-      for (int i = 0; i < PlayerHand.size(); i++){
-         System.out.println(PlayerHand.get(i).toString() +  " , ");
+      
+      lblCard8.setText("" + PlayerHand.get(7).getNumber());
+      if(PlayerHand.get(7).getColor().equals("RED")){
+         lblCard8.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+         lblCard8.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(PlayerHand.get(7).getColor().equals("GREEN")){
+         lblCard8.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+         lblCard8.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(PlayerHand.get(7).getColor().equals("BLUE")){
+         lblCard8.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+         lblCard8.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
+      }else if(PlayerHand.get(7).getColor().equals("YELLOW")){
+         lblCard8.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
+         lblCard8.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
+      }else if((PlayerHand.get(7).getColor().equals("WILD"))){
+         lblCard8.setText("WILD");
+         lblCard8.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+         lblCard8.setStyle("-fx-font: 10 arial; -fx-text-fill: white;");
+      }else if((PlayerHand.get(7).getColor().equals("WILD+4"))){
+         lblCard8.setText("WILD+4");
+         lblCard8.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+         lblCard8.setStyle("-fx-font: 10 arial; -fx-text-fill: white;");
       }
+      
+      lblCard8.setPrefHeight(100);
+      lblCard8.setPrefWidth(50);
+      lblCard8.setAlignment(Pos.CENTER);
+      
+      
+      
+      //CODE TO REMOVE/PLACE A CARD
+      // lblCard7.setText("");
+//       lblCard7.setBackground(new Background(new BackgroundFill(null, null, null)));
+    
+      
    }
       
       
@@ -234,7 +293,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       lblCard5.setText("" + PlayerHand.get(4).getNumber());
       lblCard6.setText("" + PlayerHand.get(5).getNumber());
       lblCard7.setText("" + PlayerHand.get(6).getNumber());
-      lblCard8.setText("" + PlayerHand.get(7).getNumber());
+      
          
       
       if(PlayerHand.get(0).getColor().equals("RED")){
@@ -396,27 +455,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
          lblCard7.setStyle("-fx-font: 10 arial; -fx-text-fill: white;");
       }
       
-      if(PlayerHand.get(7).getColor().equals("RED")){
-         lblCard8.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
-         lblCard8.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-      }else if(PlayerHand.get(7).getColor().equals("GREEN")){
-         lblCard8.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
-         lblCard8.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-      }else if(PlayerHand.get(7).getColor().equals("BLUE")){
-         lblCard8.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
-         lblCard8.setStyle("-fx-font: 24 arial; -fx-text-fill: white;");
-      }else if(PlayerHand.get(7).getColor().equals("YELLOW")){
-         lblCard8.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
-         lblCard8.setStyle("-fx-font: 24 arial; -fx-text-fill: black;");
-      }else if((PlayerHand.get(7).getColor().equals("WILD"))){
-         lblCard8.setText("WILD");
-         lblCard8.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
-         lblCard8.setStyle("-fx-font: 10 arial; -fx-text-fill: white;");
-      }else if((PlayerHand.get(7).getColor().equals("WILD+4"))){
-         lblCard8.setText("WILD+4");
-         lblCard8.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
-         lblCard8.setStyle("-fx-font: 10 arial; -fx-text-fill: white;");
-      }
+      
 
       lblCard1.setPrefHeight(100);
       lblCard1.setPrefWidth(50);
@@ -448,9 +487,7 @@ public class UnoClient extends Application implements EventHandler<ActionEvent>{
       lblCard7.setPrefWidth(50);
       lblCard7.setAlignment(Pos.CENTER);
       
-      lblCard8.setPrefHeight(100);
-      lblCard8.setPrefWidth(50);
-      lblCard8.setAlignment(Pos.CENTER);
+      
    
       
    }
